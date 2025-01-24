@@ -26,8 +26,6 @@
 .logo {
   width: 200px;
   height: auto;
-  margin-bottom: 2rem;
-  animation: float 3s ease-in-out infinite;
 }
 
 .title {
