@@ -25,6 +25,19 @@
   background: rgba(0, 0, 0, 0.5); /* Overlay oscuro para mejorar la legibilidad */
 }
 
+.banner-char {
+  position: absolute;
+  top: 20%;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 80%;
+  width: 100%;
+  background-size: 100%;
+  background-position: top;
+  background-repeat: no-repeat;
+}
+
 .banner-content {
   position: relative;
   text-align: center;
