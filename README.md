@@ -1,35 +1,13 @@
-# 🚀 React + TypeScript Base Project
+# 🎮 OzRo - Sitio Web
 
-Base para proyectos web usando React 18, TypeScript y Firebase. Diseñada para iniciar rápidamente nuevos proyectos con una estructura limpia y moderna.
-
-## ⚡️ Características
-
-- React 18
-- TypeScript
-- React Router v6
-- CSS Modules
-- Estructura de carpetas optimizada
-- Configuración de ESLint y Prettier
-- Componentes base reutilizables
-
-## 📁 Estructura del Proyecto
-
-src/
-├── components/ # Componentes reutilizables de la aplicación
-│   ├── Main.tsx
-│   └── NotFound.tsx
-├── styles/ # Archivos CSS globales
-│   └── App.css
-├── App.tsx # Configuración de rutas y componente principal
-└── main.tsx # Punto de entrada de la aplicación
+Sitio web para el servidor privado familiar OzRo. Este servidor es solo accesible dentro de nuestra VPN privada.
 
 ## 🚀 Inicio Rápido
 
 1. **Clona el repositorio**
-
 ```bash
-git clone https://github.com/forjadecodigo/base-project.git
-cd base-project
+git clone https://github.com/ozcodex/ozro-site.git
+cd ozro-site
 ```
 
 2. **Instala las dependencias**
@@ -37,36 +15,16 @@ cd base-project
 npm install
 ```
 
-3. **Configura las variables de entorno**
-```bash
-cp .env.example .env
-```
-Edita el archivo `.env` con tus credenciales
-
-4. **Inicia el servidor de desarrollo**
+3. **Inicia el servidor de desarrollo**
 ```bash
 npm run dev
 ```
 
-## 📦 Scripts Disponibles
+## 📖 Documentación Técnica
 
-- `npm run dev`: Inicia el servidor de desarrollo en `http://localhost:5173`
-- `npm run build`: Construye la aplicación para producción en `/dist`
-- `npm run preview`: Vista previa de la build de producción
-- `npm run deploy`: Despliega la aplicación en Firebase Hosting
-
-## 🔧 Configuración de Firebase
-
-1. Crea un proyecto en [Firebase Console](https://console.firebase.google.com)
-2. Copia las credenciales en tu archivo `.env`
-3. Instala Firebase CLI: `npm install -g firebase-tools`
-4. Inicia sesión: `firebase login`
-5. Inicializa Firebase: `firebase init`
-
-## 📄 Licencia
-
-MIT License - ver el archivo [LICENSE](LICENSE) para más detalles
+Para detalles sobre la estructura del proyecto, configuración y guías técnicas, consulta el repositorio base:
+[base-react-firebase-site](https://github.com/ozcodx/base-react-firebase-site)
 
 ---
 
-Desarrollado por [OzCodeX](https://github.com/ozcodex) para [Forja de Código](https://forjadecodigo.com) ⚒️
+Desarrollado por [OzCodeX](https://github.com/ozcodex) 🎮
