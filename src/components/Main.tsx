@@ -1,22 +1,31 @@
 import { useEffect, useState } from 'react';
 import Header from './Header';
 import '../styles/Main.css';
+import Cookies from 'js-cookie';
 
 const TOTAL_CITIES = 8;
 const TOTAL_CHARS = 7;
 
 const Main = () => {
-  const [randomCity, setRandomCity] = useState('1');
-  const [randomChar, setRandomChar] = useState('1');
+  const [randomCity, setRandomCity] = useState(Cookies.get('randomCity') || '1');
+  const [randomChar, setRandomChar] = useState(Cookies.get('randomChar') || '1');
 
   useEffect(() => {
-    const randomNumber = Math.floor(Math.random() * TOTAL_CITIES) + 1;
-    setRandomCity(randomNumber.toString());
+    let newCity;
+    do {
+      newCity = Math.floor(Math.random() * TOTAL_CITIES) + 1;
+    } while (newCity.toString() === randomCity);
+    setRandomCity(newCity.toString());
+    Cookies.set('randomCity', newCity.toString());
   }, []);
 
   useEffect(() => {
-    const randomNumber = Math.floor(Math.random() * TOTAL_CHARS) + 1;
-    setRandomChar(randomNumber.toString());
+    let newChar;
+    do {
+      newChar = Math.floor(Math.random() * TOTAL_CHARS) + 1;
+    } while (newChar.toString() === randomChar);
+    setRandomChar(newChar.toString());
+    Cookies.set('randomChar', newChar.toString());
   }, []);
 
   return (
