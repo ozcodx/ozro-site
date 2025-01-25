@@ -13,7 +13,10 @@ const Header = () => {
     <header className="header">
       <div className="header-container">
         <div className="logo">
-          <Link to="/">OzRagnarok</Link>
+          <Link to="/">
+            <img src="/favicon.ico" alt="OzRagnarok Logo" className="logo-icon" />
+            <span>OzRagnarok</span>
+          </Link>
         </div>
         <button className={`menu-toggle ${isMenuOpen ? 'active' : ''}`} onClick={toggleMenu}>
           <span className="hamburger"></span>
