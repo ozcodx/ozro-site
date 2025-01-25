@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import Header from './Header';
 import InfoCard from './InfoCard';
 import News from './News';
-import Separator from './Separator';
 import '../styles/Main.css';
 import Cookies from 'js-cookie';
 
@@ -89,21 +88,60 @@ const Main = () => {
       </div>
       <div className="server-info-section">
         <News>
-          <p>
-            <strong>¡Nuevo Sistema de Mascotas! 🐾</strong><br />
-            Las mascotas ahora pueden subir de nivel y participar activamente en combate. ¡Entrena a tu compañero y hazlo más fuerte!
-          </p>
-          <p>
-            <strong>Balance de MVPs 🏆</strong><br />
-            Hemos ajustado el HP y el daño de los MVPs para crear encuentros más desafiantes y emocionantes.
-          </p>
-          <p>
-            <strong>Nuevas Quests Disponibles 📜</strong><br />
-            Se han agregado misiones exclusivas con recompensas únicas en las ciudades principales.
-          </p>
-          <p>
-            <strong>Mejoras en el Sistema de Party 👥</strong><br />
-            Ahora las parties reciben bonificaciones adicionales de experiencia y mejores tasas de drop cuando juegan juntos.
+          
+          <p> <strong>25 Enero de 2025</strong><br />
+            Se realizaron múltiples mejoras en la quest de armas Crimson, incluyendo ajustes en los costos, 
+            mejoras en los diálogos y correcciones en la ubicación de los NPCs. También se modificó el sistema 
+            de intercambio de ítems de la quest. 
+            Además, se solucionó un bug en el NPC Trasher que cambiaba los ítems tras cada reconexión. 
+          </p> 
+          <p> <strong>22 Enero de 2025</strong><br />
+            Se mejoró la funcionalidad del Mystic Channeler, añadiendo los comandos "resetfeel" y "resethate".
+            También se corrigieron errores en los IDs de los minerales enriquecidos. 
+          </p> 
+          <p> <strong>21 Enero de 2025</strong><br />
+            El sistema de recompensas del apostador fue actualizado con nuevos ítems,
+            y se eliminaron los tickets de refinamiento +11 del Refine Master.
+            Además, se corrigieron errores en los comandos de los GMs y se modificaron las bases de datos de asistencia y cash shop. 
+          </p> 
+          <p> <strong>19 Enero de 2025</strong><br />
+            Se añadió la quest de creación de armas Crimson, se actualizaron varios NPCs y se corrigieron errores en scripts.
+            También se mejoró el diálogo del NPC Trasher y se implementó un límite de gasto diario de 1M de Zeny. 
+          </p> 
+          <p> <strong>18 Enero de 2025</strong><br />
+            Se introdujo un nuevo NPC llamado "Trasher", un cazador de tesoros que compra ítems misceláneos hasta diez veces su valor.
+            Además, se ajustaron las configuraciones de batalla, aumentando las estadísticas de los jugadores,
+            modificando las tasas de experiencia y los rates de drop de ítems. 
+          </p> 
+          <p> <strong>13 Enero de 2025</strong><br />
+            Se habilitó el sistema de autoloot para los jugadores regulares,
+            se realizaron cambios en NPCs personalizados y se configuró la dirección IP del nuevo servidor. 
+          </p> 
+          <p> <strong>de 2021 a 2025</strong><br />
+            Tras un largo período de inactividad, la construcción del servidor se detuvo por diversas razones.
+            Entre ellas, cambios en prioridades personales y falta de tiempo para continuar con el desarrollo.
+            Sin embargo, en 2025 el proyecto fue retomado con renovada energía,
+            incorporando nuevas mecánicas y mejoras al balance del juego. 
+          </p> 
+          <p> <strong>22 Junio de 2021</strong><br />
+            Se ajustó el sistema de apuestas y se agregó un nuevo NPC llamado "Monke",
+            un segundo apostador con nuevas mecánicas de juego. 
+          </p> 
+          <p> <strong>19 Junio de 2021</strong><br />
+            El sistema de misiones de caza recibió mejoras,
+            incluyendo la incorporación de nuevos sombreros y la modificación del tiempo de los buffs de los Soul Linkers.
+            También se ajustó el daño recibido por los MVP con aura verde, aumentando en un 10%.
+            Se resolvió un error con los Cash Points en las misiones de caza y se implementó la personalización de ítems. 
+          </p> 
+          <p> <strong>16 Junio de 2021</strong><br />
+            Se incorporaron NPCs personalizados y se introdujeron nuevas configuraciones al servidor.
+            Además, se añadieron misiones repetibles de experiencia y se otorgaron nuevos comandos a los jugadores. 
+          </p> 
+          <p> <strong>21 Junio de 2021 - Inicio del servidor</strong><br />
+            El servidor fue creado con la intención de ofrecer una experiencia privada y offline,
+            diseñada para un grupo reducido de jugadores. La meta era mantener un balance justo y divertido,
+            con ajustes que permitieran disfrutar del juego sin la dependencia de una gran comunidad o economía inflada.
+            Así nació un mundo personalizado donde cada NPC y mecánica fueron pensados para adaptarse a este estilo de juego.
           </p>
         </News>
       </div>
