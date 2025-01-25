@@ -49,12 +49,14 @@ const contentMap: Record<string, ReactNode> = {
 const InfoContent = ({ selectedSection }: InfoContentProps) => {
   return (
     <div className="info-content-container">
-      {contentMap[selectedSection] || (
-        <div className="info-content">
-          <h2>Sección en Construcción</h2>
-          <p>Esta sección está siendo actualizada...</p>
-        </div>
-      )}
+      <div className="scrollable-content">
+        {contentMap[selectedSection] || (
+          <div className="info-content">
+            <h2>Sección en Construcción</h2>
+            <p>Esta sección está siendo actualizada...</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
