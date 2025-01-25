@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import Header from './Header';
 import InfoCard from './InfoCard';
 import News from './News';
-import Separator from './Separator';
 import Footer from './Footer';
 import '../styles/Main.css';
 import Cookies from 'js-cookie';

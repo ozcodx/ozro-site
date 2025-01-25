@@ -1,11 +1,5 @@
 import { ReactNode } from 'react';
 
-interface NewsItemProps {
-  title: string;
-  content: string;
-  emoji: string;
-}
-
 interface NewsProps {
   children: ReactNode;
 }
