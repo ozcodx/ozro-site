@@ -29,6 +29,61 @@
   color: #666;
 }
 
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  position: relative;
+  z-index: 1001;
+  width: 30px;
+  height: 30px;
+}
+
+.hamburger,
+.hamburger::before,
+.hamburger::after {
+  display: block;
+  width: 24px;
+  height: 3px;
+  background-color: #333;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: all 0.3s ease-in-out;
+}
+
+.hamburger {
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.hamburger::before {
+  content: '';
+  top: -8px;
+}
+
+.hamburger::after {
+  content: '';
+  bottom: -8px;
+}
+
+/* Animación cuando el menú está activo */
+.menu-toggle.active .hamburger {
+  background-color: transparent;
+}
+
+.menu-toggle.active .hamburger::before {
+  transform: translateX(-50%) rotate(45deg);
+  top: 0;
+}
+
+.menu-toggle.active .hamburger::after {
+  transform: translateX(-50%) rotate(-45deg);
+  bottom: 0;
+}
+
 .nav-menu ul {
   display: flex;
   list-style: none;
@@ -52,8 +107,35 @@
   .header-container {
     padding: 1rem;
   }
-  
+
+  .menu-toggle {
+    display: block;
+  }
+
+  .nav-menu {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 70%;
+    height: 100vh;
+    background-color: white;
+    padding: 80px 2rem 2rem;
+    transition: right 0.3s ease;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+  }
+
+  .nav-menu.active {
+    right: 0;
+  }
+
   .nav-menu ul {
-    gap: 1rem;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .nav-menu a {
+    font-size: 1.1rem;
+    display: block;
+    padding: 0.5rem 0;
   }
 } 
