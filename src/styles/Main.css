@@ -207,6 +207,39 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 0.75rem;
+}
+
+/* Ocultar las flechas del scrollbar */
+.news-container::-webkit-scrollbar-button {
+  display: none;
+}
+
+.news-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.news-container::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+}
+
+.news-container::-webkit-scrollbar-thumb {
+  background: #ff8d7f;
+  border-radius: 10px;
+}
+
+.news-container::-webkit-scrollbar-thumb:hover {
+  background: #ff7a6a;
+}
+
+/* Para Firefox */
+.news-container {
+  scrollbar-width: thin;
+  scrollbar-color: #ff8d7f #f0f0f0;
 }
 
 .news-container p {
