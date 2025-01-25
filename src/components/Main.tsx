@@ -94,7 +94,8 @@ const Main = () => {
             Se realizaron múltiples mejoras en la quest de armas Crimson, incluyendo ajustes en los costos, 
             mejoras en los diálogos y correcciones en la ubicación de los NPCs. También se modificó el sistema 
             de intercambio de ítems de la quest. 
-            Además, se solucionó un bug en el NPC Trasher que cambiaba los ítems tras cada reconexión. 
+            Además, se solucionó un bug en el NPC Trasher que cambiaba los ítems tras cada reconexión.
+            También se balancearon las recompensas del Macaco que cambia banana y cacao por objetos de recuperación de SP.
           </p> 
           <p> <strong>22 Enero de 2025</strong><br />
             Se mejoró la funcionalidad del Mystic Channeler, añadiendo el reinicio de mapas y mobs del Star Gladiator.
