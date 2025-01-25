@@ -1,0 +1,135 @@
+.information {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.server-info-section {
+  flex: 1;
+  padding: 2rem;
+  margin-top: 60px;
+}
+
+.info-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 2rem;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Sidebar Styles */
+.info-sidebar {
+  padding: 1.5rem;
+  border-right: 1px solid #eee;
+  height: calc(100vh - 120px);
+  overflow-y: auto;
+}
+
+.sidebar-category {
+  margin-bottom: 1.5rem;
+}
+
+.sidebar-category h3 {
+  color: #666;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+  padding-left: 0.5rem;
+}
+
+.sidebar-category ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  margin: 0.25rem 0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sidebar-item:hover {
+  background-color: #f5f5f5;
+}
+
+.sidebar-item.active {
+  background-color: #f0f0f0;
+  font-weight: 500;
+}
+
+.sidebar-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 0.75rem;
+  object-fit: contain;
+}
+
+/* Content Styles */
+.info-content-container {
+  padding: 1.5rem;
+  height: calc(100vh - 120px);
+  overflow-y: auto;
+}
+
+.info-content {
+  max-width: 800px;
+}
+
+.info-content h2 {
+  color: #333;
+  margin-bottom: 1.5rem;
+  font-size: 1.75rem;
+}
+
+.content-section {
+  margin-bottom: 2rem;
+}
+
+.content-section h3 {
+  color: #444;
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+}
+
+.content-section ul {
+  list-style: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.content-section li {
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+
+.content-section p {
+  line-height: 1.6;
+  color: #555;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .info-container {
+    grid-template-columns: 1fr;
+  }
+
+  .info-sidebar {
+    height: auto;
+    max-height: 300px;
+    border-right: none;
+    border-bottom: 1px solid #eee;
+  }
+
+  .info-content-container {
+    height: auto;
+  }
+} 
