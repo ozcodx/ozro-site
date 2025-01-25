@@ -96,13 +96,13 @@ const Main = () => {
             Además, se solucionó un bug en el NPC Trasher que cambiaba los ítems tras cada reconexión. 
           </p> 
           <p> <strong>22 Enero de 2025</strong><br />
-            Se mejoró la funcionalidad del Mystic Channeler, añadiendo los comandos "resetfeel" y "resethate".
-            También se corrigieron errores en los IDs de los minerales enriquecidos. 
+            Se mejoró la funcionalidad del Mystic Channeler, añadiendo el reinicio de mapas y mobs del Star Gladiator.
+            También se corrigieron errores en los IDs de los minerales enriquecidos de la Cash Shop. 
           </p> 
           <p> <strong>21 Enero de 2025</strong><br />
-            El sistema de recompensas del apostador fue actualizado con nuevos ítems,
+            El sistema de recompensas del Gambler fue actualizado con nuevos ítems,
             y se eliminaron los tickets de refinamiento +11 del Refine Master.
-            Además, se corrigieron errores en los comandos de los GMs y se modificaron las bases de datos de asistencia y cash shop. 
+            Además, se corrigieron errores en los comandos de los GMs y se modificaron los items de Asistencia y Cash Shop. 
           </p> 
           <p> <strong>19 Enero de 2025</strong><br />
             Se añadió la quest de creación de armas Crimson, se actualizaron varios NPCs y se corrigieron errores en scripts.
@@ -110,32 +110,30 @@ const Main = () => {
           </p> 
           <p> <strong>18 Enero de 2025</strong><br />
             Se introdujo un nuevo NPC llamado "Trasher", un cazador de tesoros que compra ítems misceláneos hasta diez veces su valor.
-            Además, se ajustaron las configuraciones de batalla, aumentando las estadísticas de los jugadores,
-            modificando las tasas de experiencia y los rates de drop de ítems. 
+            Además, se ajustaron las configuraciones de batalla, modificando las tasas de experiencia y los rates de drop de ítems. 
           </p> 
           <p> <strong>13 Enero de 2025</strong><br />
-            Se habilitó el sistema de autoloot para los jugadores regulares,
-            se realizaron cambios en NPCs personalizados y se configuró la dirección IP del nuevo servidor. 
+            Se habilitó el sistema de autoloot para todos los jugadores,
+            se realizaron ajustes en NPCs personalizados y se configuró la dirección IP del nuevo servidor. 
           </p> 
           <p> <strong>de 2021 a 2025</strong><br />
             Tras un largo período de inactividad, la construcción del servidor se detuvo por diversas razones.
             Entre ellas, cambios en prioridades personales y falta de tiempo para continuar con el desarrollo.
-            Sin embargo, en 2025 el proyecto fue retomado con renovada energía,
-            incorporando nuevas mecánicas y mejoras al balance del juego. 
+            Sin embargo, en 2025 el proyecto fue retomado, incorporando nuevas mecánicas y mejoras al balance del juego. 
           </p> 
           <p> <strong>22 Junio de 2021</strong><br />
             Se ajustó el sistema de apuestas y se agregó un nuevo NPC llamado "Monke",
-            un segundo apostador con nuevas mecánicas de juego. 
+            un segundo apostador con nuevas mecánicas para conseguir consumibles. 
           </p> 
           <p> <strong>19 Junio de 2021</strong><br />
             El sistema de misiones de caza recibió mejoras,
             incluyendo la incorporación de nuevos sombreros y la modificación del tiempo de los buffs de los Soul Linkers.
             También se ajustó el daño recibido por los MVP con aura verde, aumentando en un 10%.
-            Se resolvió un error con los Cash Points en las misiones de caza y se implementó la personalización de ítems. 
+            Ademas, se resolvió un error con los Cash Points en las misiones de caza. 
           </p> 
           <p> <strong>16 Junio de 2021</strong><br />
             Se incorporaron NPCs personalizados y se introdujeron nuevas configuraciones al servidor.
-            Además, se añadieron misiones repetibles de experiencia y se otorgaron nuevos comandos a los jugadores. 
+            Además, se añadieron misiones repetibles de experiencia y se ajustaron los comandos de los jugadores. 
           </p> 
           <p> <strong>21 Junio de 2021 - Inicio del servidor</strong><br />
             El servidor fue creado con la intención de ofrecer una experiencia privada y offline,
