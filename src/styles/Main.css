@@ -27,6 +27,17 @@
   background: rgba(0, 0, 0, 0.5); /* Overlay oscuro para mejorar la legibilidad */
 }
 
+.banner::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background: linear-gradient(to bottom, transparent, white);
+  z-index: 2;
+}
+
 .banner-char {
   position: absolute;
   top: 20%;
@@ -70,11 +81,34 @@
 }
 
 .server-info-section {
-  padding: 4rem 2rem;
+  padding: 8rem 2rem;
   background-image: url('/bg.webp');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
+  position: relative;
+}
+
+.server-info-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background: linear-gradient(to bottom, white, transparent);
+  z-index: 2;
+}
+
+.server-info-section::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background: linear-gradient(to bottom, transparent, white);
+  z-index: 2;
 }
 
 .server-info-grid {
@@ -143,4 +177,66 @@
   .server-info-section {
     padding: 2rem 1rem;
   }
-} 
+}
+
+.news-section {
+  max-width: 800px;
+  margin: 0 auto;
+  background: url('/bg2.webp');
+  background-size: cover;
+  background-position: center;
+  background-blend-mode: overlay;
+  border-radius: 1rem;
+  padding: 2.5rem;
+  text-align: left;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.news-section:hover {
+  transform: translateY(-5px);
+}
+
+.news-section h2 {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  color: #333;
+}
+
+.news-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.news-container p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #666;
+}
+
+.news-container strong {
+  font-size: 1.2rem;
+  color: #333;
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
+
+@media (max-width: 640px) {
+  .news-section {
+    padding: 1.5rem;
+    margin: 0 1rem;
+  }
+  
+  .news-section h2 {
+    font-size: 1.5rem;
+  }
+  
+  .news-container p {
+    font-size: 1rem;
+  }
+  
+  .news-container strong {
+    font-size: 1.1rem;
+  }
+}

@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import Header from './Header';
 import InfoCard from './InfoCard';
+import News from './News';
+import Separator from './Separator';
 import '../styles/Main.css';
 import Cookies from 'js-cookie';
 
@@ -84,6 +86,26 @@ const Main = () => {
             description="El servidor cuenta con NPCs útiles (Healer, Endower, Reset, etc.), quests personalizadas para obtener equipo y objetos únicos, y una Cash Shop con Job Card Sets, Endow Scrolls y consumibles especiales. Además, las mascotas pueden subir de nivel y participar en combate, agregando una nueva dimensión estratégica."
           />
         </div>
+      </div>
+      <div className="server-info-section">
+        <News>
+          <p>
+            <strong>¡Nuevo Sistema de Mascotas! 🐾</strong><br />
+            Las mascotas ahora pueden subir de nivel y participar activamente en combate. ¡Entrena a tu compañero y hazlo más fuerte!
+          </p>
+          <p>
+            <strong>Balance de MVPs 🏆</strong><br />
+            Hemos ajustado el HP y el daño de los MVPs para crear encuentros más desafiantes y emocionantes.
+          </p>
+          <p>
+            <strong>Nuevas Quests Disponibles 📜</strong><br />
+            Se han agregado misiones exclusivas con recompensas únicas en las ciudades principales.
+          </p>
+          <p>
+            <strong>Mejoras en el Sistema de Party 👥</strong><br />
+            Ahora las parties reciben bonificaciones adicionales de experiencia y mejores tasas de drop cuando juegan juntos.
+          </p>
+        </News>
       </div>
     </div>
   );
