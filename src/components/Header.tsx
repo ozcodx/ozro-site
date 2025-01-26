@@ -26,7 +26,8 @@ const Header = () => {
             <li><Link to="/" onClick={toggleMenu}>Inicio</Link></li>
             <li><Link to="/information" onClick={toggleMenu}>Información</Link></li>
             <li><Link to="/database" onClick={toggleMenu}>Base de Datos</Link></li>
-            <li><Link to="/ranking" onClick={toggleMenu}>Clasificación</Link></li>
+            <li><Link to="/ranking" onClick={toggleMenu}>Rankings</Link></li>
+            <li><Link to="/encyclopedia" onClick={toggleMenu}>Enciclopedia</Link></li>
             <li><Link to="/download" onClick={toggleMenu}>Descargar</Link></li>
             <li><Link to="/donate" onClick={toggleMenu}>Donar</Link></li>
           </ul>
