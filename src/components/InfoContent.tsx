@@ -225,6 +225,59 @@ const contentMap: Record<string, ReactNode> = {
     </div>
   ),
 
+  'restrictions': (
+    <div className="info-content">
+      <h2>Restricciones y penalizaciones</h2>
+      <div className="content-section">
+        <p>
+          Para mantener el balance del juego, evitar abusos y mantener la progresión se establecen los siguientes límites:
+        </p>
+        <h3>Niveles Máximos</h3>
+        <ul>  
+          <li>Clases Regulares: 99/50</li>
+          <li>Clases Expanded: 99/60</li>
+          <li>Clases Renacidas: 99/70</li>
+          <li>Clases Avanzadas: 175/60</li>
+        </ul>
+        <h3>Estadísticas Máximas</h3>
+        <ul>
+          <li>Baby Classes: 80</li>
+          <li>Clases Regulares: 99</li>
+          <li>Clases Expanded Avanzadas: 125</li>
+          <li>Clases Avanzadas: 130</li>
+        </ul>
+        <h3>Restricciones Generales</h3>
+        <ul>
+          <li>Velocidad de ataque máxima (ASPD): 193 clases regulares y 195 clases avanzadas</li>
+          <li>Máximo de Zeny: 2,147,483,647</li>
+          <li>Nivel máximo para compartir experiencia en Party: 15 niveles</li>
+          <li>Máximo nivel de Safe Refine Ticket: +9</li>
+          <li>Máximo nivel de Refine: +20</li>
+        </ul>
+        <h3>Penalizaciones de Experiencia y Drop</h3>
+        <ul>
+          <li>Monstruos 30 niveles por encima: Drop reducido al 50%, experiencia al 40%.</li>
+          <li>Monstruos 15 niveles por encima: Drop reducido al 60%, experiencia al 100%.</li>
+          <li>Monstruos 10 niveles por encima: Drop reducido al 75%, pero experiencia aumentada a 140%.</li>
+          <li>Monstruos en el rango de nivel del jugador: Experiencia y drop normales.</li>
+          <li>Monstruos 10 niveles por debajo: Drop reducido al 75%, experiencia reducida al 90%.</li>
+          <li>Monstruos 15 niveles por debajo: Drop reducido al 60%, experiencia reducida al 80%.</li>
+          <li>Monstruos 30 niveles por debajo: Drop reducido al 50%, experiencia mínima del 10%.</li>
+        </ul>
+        <h3>Indicador de Penalizaciones</h3>
+        <p>
+          Para ayudar a los jugadores a visualizar las penalizaciones de experiencia y drop, se ha implementado un indicador visual.
+          Este indicador muestra el nivel del monstruo en comparación con el nivel del jugador, lo que facilita la selección de objetivos adecuados.
+        </p>
+        <ul>
+          <li>Rojo: Monstruos 10+ niveles por encima.</li>
+          <li>Rosa: Monstruos dentro del rango de nivel.</li>
+          <li>Gris: Monstruos 15+ niveles por debajo.</li>
+        </ul>
+      </div>
+    </div>
+  ),
+
 };
 
 const InfoContent = ({ selectedSection }: InfoContentProps) => {
