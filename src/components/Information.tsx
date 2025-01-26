@@ -14,13 +14,13 @@ export type InfoSection = {
 
 const sections: InfoSection[] = [
   // Información del Servidor
-  { id: 'features', title: 'Características', icon: '/icons/feature.png', category: 'Información del Servidor' },
+  { id: 'features', title: 'Especificaciones', icon: '/icons/feature.png', category: 'Información del Servidor' },
   { id: 'exp-rates', title: 'Rates de Experiencia', icon: '/icons/exp.png', category: 'Información del Servidor' },
   { id: 'drop-rates', title: 'Tasa de Drop', icon: '/icons/drop.png', category: 'Información del Servidor' },
   { id: 'stats', title: 'Estadísticas', icon: '/icons/stats.png', category: 'Información del Servidor' },
 
   // Sistemas Personalizados
-  { id: 'unique-features', title: 'Características Personalizadas', icon: '/icons/unique.png', category: 'Sistemas Personalizados' },
+  { id: 'unique-features', title: 'Características Únicas', icon: '/icons/unique.png', category: 'Sistemas Personalizados' },
   { id: 'cash-shop', title: 'Cash Shop', icon: '/icons/cash.png', category: 'Sistemas Personalizados' },
   { id: 'restrictions', title: 'Restricciones y penalizaciones', icon: '/icons/restriction.png', category: 'Sistemas Personalizados' },
 
