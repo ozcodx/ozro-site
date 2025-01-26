@@ -95,7 +95,7 @@ const contentMap: Record<string, ReactNode> = {
   ),
   'unique-features': (
     <div className="info-content">  
-      <h2>Características Únicas</h2>
+      <h2>Mecanicas Únicas</h2>
       <div className="content-section">
         <p>
           Nuestro servidor busca ofrecer una experiencia ajustada para quienes buscan algo diferente.
@@ -106,11 +106,11 @@ const contentMap: Record<string, ReactNode> = {
           Algunas de las características que mejoran la Jugabilidad:
         </p>
         <ul>
-          <li>Progresión más ágil: No necesitas completar misiones para cambiar al primer Job.</li>
-          <li>Desafíos estratégicos: Los monstruos tienen el doble de HP y pueden realizar golpes críticos.</li>
-          <li>Sistema de party optimizado: Bonificaciones adicionales de experiencia para incentivar el juego en equipo.</li>
-          <li>Los Boss tiene Heal reducido: Ya no necesitas una gran party para derrotarlos.</li>
-          <li>La barra de vida de los enemigos está oculta, excepto en los Boss, aumentando la inmersión.</li>
+          <li>No necesitas completar misiones para cambiar al primer Job.</li>
+          <li>Los monstruos tienen el doble de HP y pueden realizar golpes críticos.</li>
+          <li>Bonificaciones adicionales de experiencia en party para incentivar el juego en equipo.</li>
+          <li>Los Boss tienen Heal reducido, ya no se necesita una gran party para derrotarlos.</li>
+          <li>La barra de vida de los enemigos está oculta, excepto en los Boss.</li>
         </ul>
         <p>
           Algunos cambios para balancear la Economía:
@@ -139,6 +139,87 @@ const contentMap: Record<string, ReactNode> = {
           <li>Algunos consumibles también están disponibles, facilitando la preparación para el combate.</li>
           <li>Equipo Rental que permite ganar mas experiencia.</li>
           <li>El Equipamento que antes era de Cash Shop ahora se consigue mediante Quests.</li>
+        </ul>
+      </div>
+    </div>
+  ),
+  'cash-shop': (
+    <div className="info-content">
+      <h2>Cash Shop</h2>
+      <div className="content-section">
+        <p>
+          La Cash Shop ofrece una variedad de productos para mejorar la experiencia de juego sin desequilibarlo.
+          Aquí encontrarás mejoras de conveniencia, potenciadores temporales y objetos difíciles de obtener.
+        </p>
+        <h3>Materiales de Mejora</h3>
+        <p>
+          Para Refinamiento Avanzados y mejores probabilidades:
+        </p>
+        <ul>
+            <li><strong>Metales de Forja:</strong> HD Elunium, Enriched Elunium, HD Oridecon, Enriched Oridecon.</li>
+            <li><strong>Metales Avanzados:</strong> Bradium, HD Bradium, Cardium, HD Cardium.</li>
+        </ul>
+        <h3>Mejoras de Conveniencia</h3>
+        <p>
+          Acceso unico a mejoras o facilidades exclusivas en el juego:
+        </p>
+        <ul>
+            <li><strong>Gym Pass:</strong> Aumenta la capacidad de carga de peso</li>
+            <li><strong>Kafra Storage Card:</strong> Accede a tu almacenamiento desde cualquier lugar</li>
+        </ul>
+        <h3>Buffs y Reforzamientos Temporales</h3>
+        <p>
+          Para aquellos que buscan una ventaja estratégica:
+        </p>
+        <ul>
+            <li><strong>Abrasive:</strong> Incremento de Critical Rate</li>
+            <li><strong>Scrolls de Buffs de High Priest:</strong> Blessing, Increase Agi, Aspersio, Assumptio, Lex Aeterna.</li>
+            <li><strong>Elemental Converter Scrolls:</strong> Fire, Earth, Water, Wind.</li>
+        </ul>
+        <h3>Bonificaciones de Experiencia</h3>
+        <p>
+          Anillos de alquiler que otorgan un +15% de EXP contra enemigos de un tipo específico durante una semana:
+        </p>
+        <ul>
+            <li><strong>Beholder Ring:</strong> Neutral</li>
+            <li><strong>Bloody Ring:</strong> Demihuman</li>
+            <li><strong>Chemical Ring:</strong> Plant</li>
+            <li><strong>Clamorous Ring:</strong> Brute</li>
+            <li><strong>Decussate Ring:</strong> Demon</li>
+            <li><strong>Fisher Ring:</strong> Fish</li>
+            <li><strong>Hallow Ring:</strong> Undead</li>
+            <li><strong>Insecticide Ring:</strong> Insect</li>
+            <li><strong>Satanic Ring:</strong> Angel</li>
+        </ul>
+        <h3>Cajas de Objetos Aleatorios</h3>
+        <p>
+          Sorpresas para los jugadores que disfrutan de la emoción de lo inesperado:
+        </p>
+        <ul>
+            <li><strong>Jewelery Box:</strong> Accesorios aleatorios</li>
+            <li><strong>Wrapped Mask:</strong> Máscaras aleatorias</li>
+            <li><strong>Old Red Box:</strong> Equipo aleatorio</li>
+            <li><strong>Poring Box:</strong> Invoca un Poring aleatorio, incluyendo Angeling, Deviling y Ghostring</li>
+        </ul>
+        <h3>Consumibles Útiles</h3>
+        <p>
+          Para esos momentos críticos en el combate:
+        </p>
+        <ul>
+            <li><strong>Cursed Water:</strong> Encanta el arma con propiedad Shadow</li>
+            <li><strong>Blue Potion:</strong> Recuperación rápida de SP</li>
+            <li><strong>Acid Bomb:</strong> Para Alchemist y Creator</li>
+            <li><strong>Yggdrasil Leaf:</strong> Revive a un aliado caído</li>
+            <li><strong>Token of Siegfried:</strong> Revive instantáneamente en combate</li>
+        </ul>
+        <h3>Conjuntos de Cartas</h3>
+        <p>
+          Perfectos para aquellos que buscan fortalecer a sus personajes con builds específicas:
+        </p>
+        <ul>
+            <li><strong>First Class Sets:</strong> Archer, Acolyte, Swordman, Magician, Thief, Merchant.</li>
+            <li><strong>Second Class Sets:</strong> Crusader, Alchemist, Bard, Rogue, Sage, Monk.</li>
+            <li><strong>Other Sets:</strong> Owl, Clock Tower, Ghost, Geffenia, Nightmare.</li>
         </ul>
       </div>
     </div>
