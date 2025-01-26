@@ -13,26 +13,26 @@ export type InfoSection = {
 };
 
 const sections: InfoSection[] = [
-  // Tasas y Configuraciones
-  { id: 'exp-rates', title: 'Tasas de Experiencia', icon: '/icons/exp.webp', category: 'Tasas y Configuraciones' },
-  { id: 'drop-rates', title: 'Tasas de Drop', icon: '/icons/drop.webp', category: 'Tasas y Configuraciones' },
-  { id: 'battle-config', title: 'Config. de Batalla', icon: '/icons/battle.webp', category: 'Tasas y Configuraciones' },
-  { id: 'party-config', title: 'Config. de Party', icon: '/icons/party.webp', category: 'Tasas y Configuraciones' },
-  
-  // NPCs y Servicios
-  { id: 'utility-npcs', title: 'NPCs de Utilidad', icon: '/icons/npc.webp', category: 'NPCs y Servicios' },
-  { id: 'custom-npcs', title: 'NPCs Personalizados', icon: '/icons/custom.webp', category: 'NPCs y Servicios' },
-  { id: 'cash-shop', title: 'Cash Shop', icon: '/icons/cash.webp', category: 'NPCs y Servicios' },
-  
-  // Sistemas Personalizados
-  { id: 'custom-quests', title: 'Misiones Custom', icon: '/icons/quest.webp', category: 'Sistemas Personalizados' },
-  { id: 'custom-items', title: 'Items Custom', icon: '/icons/item.webp', category: 'Sistemas Personalizados' },
-  { id: 'custom-features', title: 'Características Custom', icon: '/icons/feature.webp', category: 'Sistemas Personalizados' },
-  
   // Información del Servidor
-  { id: 'server-info', title: 'Datos del Servidor', icon: '/icons/server.webp', category: 'Información del Servidor' },
-  { id: 'commands', title: 'Comandos', icon: '/icons/command.webp', category: 'Información del Servidor' },
-  { id: 'rules', title: 'Reglas', icon: '/icons/rules.webp', category: 'Información del Servidor' },
+  { id: 'features', title: 'Características', icon: '/icons/feature.png', category: 'Información del Servidor' },
+  { id: 'exp-rates', title: 'Rates de Experiencia', icon: '/icons/exp.png', category: 'Información del Servidor' },
+  { id: 'drop-rates', title: 'Tasa de Drop', icon: '/icons/drop.png', category: 'Información del Servidor' },
+  { id: 'stats', title: 'Estadísticas', icon: '/icons/stats.png', category: 'Información del Servidor' },
+
+  // Sistemas Personalizados
+  { id: 'unique-features', title: 'Características Personalizadas', icon: '/icons/unique.png', category: 'Sistemas Personalizados' },
+  { id: 'cash-shop', title: 'Cash Shop', icon: '/icons/cash.png', category: 'Sistemas Personalizados' },
+  { id: 'restrictions', title: 'Restricciones y penalizaciones', icon: '/icons/restriction.png', category: 'Sistemas Personalizados' },
+
+  // NPCs Personalizados
+  { id: 'trade-npcs', title: 'Comercio e Intercambio', icon: '/icons/trade.png', category: 'NPCs Personalizados' },
+  { id: 'buff-npcs', title: 'Buffs y Soporte', icon: '/icons/buff.png', category: 'NPCs Personalizados' },
+  { id: 'other-npcs', title: 'Otros', icon: '/icons/npc.png', category: 'NPCs Personalizados' },
+
+  // Quests Personalizadas
+  { id: 'crimson-weapons', title: 'Crimson Weapons', icon: '/icons/weapon.png', category: 'Quests Personalizadas' },
+  { id: 'bounty-missions', title: 'Bounty Missions', icon: '/icons/bounty.png', category: 'Quests Personalizadas' },
+  { id: 'hunting-missions', title: 'Hunting Missions', icon: '/icons/hunt.png', category: 'Quests Personalizadas' },
 ];
 
 const Information = () => {

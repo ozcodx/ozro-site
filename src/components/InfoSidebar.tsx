@@ -1,4 +1,4 @@
-import { InfoSection } from '../types/types';
+import { InfoSection } from './Information';
 import '../styles/Information.css';
 
 interface InfoSidebarProps {
