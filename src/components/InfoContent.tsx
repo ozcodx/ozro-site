@@ -278,6 +278,46 @@ const contentMap: Record<string, ReactNode> = {
     </div>
   ),
 
+  'trade-npcs': (
+    <div className="info-content">
+      <h2>Comercio e Intercambio</h2>
+      <div className="content-section">
+        <ul>
+          <li><strong>Card Trader</strong> - Permite intercambiar cartas por objetos especiales.</li>
+          <li><strong>Cash Point Merchant</strong> - Facilita la compra y venta de Cash Points usando Zeny.</li>
+          <li><strong>Thrasher</strong> - Recolecta objetos aleatorios por un alto precio.</li>
+          <li><strong>Old Blacksmith</strong> - Permite intercambiar el Special Gold obtenido en Bounty Missions por piedras y bendiciones de Blacksmith.</li>
+          <li><strong>Monke</strong> - Un simpático Yoyo que intercambia bananas por frutas aleatorias.</li>
+        </ul>
+      </div>
+    </div>
+  ),
+
+  'buff-npcs': (
+    <div className="info-content">
+      <h2>Buffs y Soporte</h2>
+      <div className="content-section">
+        <ul>
+          <li><strong>Healer</strong> - Cura completamente al personaje y otorga Buffs temporales.</li>
+          <li><strong>Endower</strong> - Un sabio viajero que encanta armas con poder elemental por un costo.</li>
+          <li><strong>Soul Linker</strong> - Otorga Buffs exclusivos de Soul Linker a cambio de Zeny.</li>
+          <li><strong>Reset Girl</strong> - Permite reiniciar estadísticas y habilidades del personaje, solo se puede usar una vez por personaje.</li>
+        </ul>
+      </div>
+    </div>
+  ),
+
+  'other-npcs': (
+    <div className="info-content">
+      <h2>Otros NPCs</h2>
+      <div className="content-section">
+        <ul>
+          <li><strong>Cronista</strong> - Lleva un conteo de los aventureros que recorren el mundo.</li>
+        </ul>
+      </div>
+    </div>
+  ),
+
 };
 
 const InfoContent = ({ selectedSection }: InfoContentProps) => {
