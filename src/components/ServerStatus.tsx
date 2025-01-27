@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import '../styles/ServerStatus.css';
-import { collection, query, orderBy, limit, onSnapshot, Timestamp, getDocs } from 'firebase/firestore';
+import { collection, query, onSnapshot, Timestamp } from 'firebase/firestore';
 import { db } from '../firebase.js';
 
 interface StatusItemProps {
@@ -71,59 +71,22 @@ const ServerStatus = () => {
   }, []);
 
   useEffect(() => {
-    console.log('Configurando escucha en tiempo real...');
     try {
       const serverStatusRef = collection(db, 'server-status');
-      console.log('Referencia a colección creada');
-      
       const q = query(serverStatusRef);
-      console.log('Query creada sin ordenamiento');
 
       const unsubscribe = onSnapshot(q, (snapshot) => {
-        console.log('Snapshot recibido, documentos:', snapshot.size);
         if (!snapshot.empty) {
           const doc = snapshot.docs[0];
           const data = doc.data() as ServerStatusData;
-          console.log('Datos recibidos:', data);
           setStatusData(data);
         }
-      }, (error) => {
-        console.error('Error en el listener:', error);
       });
 
-      return () => {
-        console.log('Limpiando listener...');
-        unsubscribe();
-      };
+      return () => unsubscribe();
     } catch (error) {
-      console.error('Error al configurar la escucha:', error);
+      console.error('Error al conectar con Firestore:', error);
     }
-  }, []);
-
-  // Efecto para listar todas las colecciones
-  useEffect(() => {
-    const listCollections = async () => {
-      try {
-        console.log('Intentando listar colecciones...');
-        const collections = await getDocs(collection(db, 'server-status'));
-        console.log('Documentos en server-status:', collections.size);
-        collections.forEach(doc => {
-          console.log('Documento encontrado:', doc.id, doc.data());
-        });
-
-        // Intentar listar otros documentos en la raíz
-        const rootCollections = await getDocs(collection(db, 'server_status'));
-        console.log('Documentos en server_status:', rootCollections.size);
-        rootCollections.forEach(doc => {
-          console.log('Documento encontrado en server_status:', doc.id, doc.data());
-        });
-
-      } catch (error) {
-        console.error('Error al listar colecciones:', error);
-      }
-    };
-
-    listCollections();
   }, []);
 
   return (
