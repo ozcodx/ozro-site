@@ -33,7 +33,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5); /* Overlay oscuro para mejorar la legibilidad */
+  background: rgba(0, 0, 0, 0.3); /* Overlay oscuro para mejorar la legibilidad */
 }
 
 .banner::after {
@@ -55,7 +55,7 @@ body {
   bottom: 0;
   height: 80%;
   width: 100%;
-  background-size: 100%;
+  background-size: 120%;
   background-position: top;
   background-repeat: no-repeat;
   opacity: 0;
@@ -119,13 +119,17 @@ body {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 825px) {
   .banner-content h1 {
     font-size: 2.5rem;
   }
   
   .banner-content p {
     font-size: 1.2rem;
+  }
+
+  .banner-char {
+    background-size: 150%;
   }
 }
 

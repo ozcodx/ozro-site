@@ -181,7 +181,7 @@
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 825px) {
   .info-container {
     grid-template-columns: 1fr;
   }
