@@ -24,6 +24,7 @@ body {
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  touch-action: pan-y pinch-zoom;
 }
 
 .banner::before {
@@ -130,6 +131,13 @@ body {
 
   .banner-char {
     background-size: 150%;
+  }
+}
+
+@media (max-width: 768px) {
+  .banner {
+    background-attachment: scroll;
+    touch-action: auto;
   }
 }
 
