@@ -3,6 +3,7 @@ import Header from './Header';
 import InfoCard from './InfoCard';
 import News from './News';
 import Footer from './Footer';
+import ServerStatus from './ServerStatus';
 import '../styles/Main.css';
 import Cookies from 'js-cookie';
 
@@ -132,6 +133,7 @@ const Main = () => {
           />
         </div>
       </div>
+      <ServerStatus />
       <div className="server-info-section">
         <News>
           

@@ -1,0 +1,170 @@
+.server-status {
+  background: white;
+  padding: 2rem 1rem;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.6s ease-out;
+}
+
+.server-status.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.status-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 1rem;
+  align-items: center;
+}
+
+.status-column {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: #FFF9F8;
+  border-radius: 0.5rem;
+  transition: transform 0.3s ease;
+}
+
+.status-item:hover {
+  transform: translateY(-2px);
+}
+
+.status-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.status-icon img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+.status-info {
+  text-align: left;
+}
+
+.status-item h4 {
+  color: #666;
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: normal;
+}
+
+.status-value {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.status-value.online {
+  color: #4CAF50;
+}
+
+.status-value.offline {
+  color: #f44336;
+}
+
+/* Estilos para la tarjeta de evento */
+.status-center {
+  text-align: center;
+}
+
+.event-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: #F7FCFF;
+  color: #333;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.event-card:hover {
+  transform: translateY(-2px);
+}
+
+.event-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.event-icon img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+.event-info {
+  text-align: left;
+  flex-grow: 1;
+}
+
+.event-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.3rem;
+}
+
+.event-label {
+  font-size: 0.8rem;
+  color: #666;
+  font-weight: bold;
+}
+
+.event-time {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.event-title {
+  font-size: 1rem;
+  margin: 0;
+  color: #333;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .server-status {
+    padding: 1.5rem 1rem;
+  }
+  
+  .status-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .status-column {
+    justify-content: center;
+  }
+
+  .event-card {
+    justify-content: center;
+  }
+} 
