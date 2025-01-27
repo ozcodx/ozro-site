@@ -1,6 +1,15 @@
+body {
+  margin: 0;
+  padding: 0;
+  background: white;
+  overflow-x: hidden;
+}
+
 .main {
   min-height: 100vh;
   width: 100%;
+  overflow-x: hidden;
+  background: white;
 }
 
 .banner {
@@ -168,11 +177,43 @@
   padding: 2rem;
   text-align: center;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
+  opacity: 0;
+  transform: translateX(-150px);
+  transition: all 0.8s ease-out;
 }
 
-.server-info-card:hover {
-  transform: translateY(-5px);
+/* Primera tarjeta - más lenta y desde más lejos */
+.server-info-grid > div:nth-child(1) {
+  transform: translateX(-150px);
+  transition: all 0.6s ease-out;
+}
+
+/* Segunda tarjeta - más rápida y desde más cerca */
+.server-info-grid > div:nth-child(2) {
+  transform: translateX(-80px);
+  transition: all 0.6s ease-out;
+}
+
+/* Tercera tarjeta - más rápida y desde más cerca */
+.server-info-grid > div:nth-child(3) {
+  transform: translateX(80px);
+  transition: all 0.6s ease-out;
+}
+
+/* Cuarta tarjeta - más lenta y desde más lejos */
+.server-info-grid > div:nth-child(4) {
+  transform: translateX(150px);
+  transition: all 0.6s ease-out;
+}
+
+.server-info-card.visible {
+  opacity: 1;
+  transform: translateX(0) !important;
+}
+
+.server-info-card.visible:hover {
+  transform: translateY(-5px) !important;
+  transition: transform 0.3s ease;
 }
 
 .card-icon {
@@ -207,6 +248,17 @@
   .server-info-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  /* Ajustamos las animaciones para tablet */
+  .server-info-grid > div:nth-child(1),
+  .server-info-grid > div:nth-child(2) {
+    transform: translateX(-80px);
+  }
+
+  .server-info-grid > div:nth-child(3),
+  .server-info-grid > div:nth-child(4) {
+    transform: translateX(80px);
+  }
 }
 
 @media (max-width: 640px) {
@@ -216,6 +268,18 @@
   
   .main .server-info-section {
     padding: 2rem 1rem;
+  }
+
+  /* Ajustamos las animaciones para móvil */
+  .server-info-grid > div {
+    transform: translateX(0) !important;
+    opacity: 0;
+    transform: translateY(50px) !important;
+  }
+
+  .server-info-grid > div.visible {
+    transform: translateY(0) !important;
+    opacity: 1;
   }
 }
 

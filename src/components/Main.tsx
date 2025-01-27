@@ -122,11 +122,13 @@ const Main = () => {
             iconUrl={`/mobs/${randomMobs[2]}.webp`}
             title="Redescubre el Juego con un Nuevo Enfoque."
             description="Aquí el comercio y la economía no son el centro del juego. Con NPCs personalizados y misiones únicas, todo está diseñado para una experiencia autosuficiente, ideal para jugar solo o en pequeños grupos sin depender de un mercado masivo."
+            fromRight
           />
           <InfoCard
             iconUrl={`/mobs/${randomMobs[3]}.webp`}
             title="Un Mundo en constante Evolución."
             description="Con ajustes y actualizaciones constantes, la experiencia siempre se mantiene fresca y equilibrada. Además, Tu voz es escuchada, este es un servidor en crecimiento donde las ideas y propuestas de los jugadores pueden dar forma al mundo en el que juegas."
+            fromRight
           />
         </div>
       </div>
