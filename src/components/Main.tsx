@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Header from './Header';
 import InfoCard from './InfoCard';
 import News from './News';
@@ -24,6 +24,8 @@ function getRandomNumbers(amount: number) {
 const Main = () => {
   const [randomCity, setRandomCity] = useState(Cookies.get('randomCity') || '1');
   const [randomChar, setRandomChar] = useState(Cookies.get('randomChar') || '1');
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const bannerRef = useRef<HTMLDivElement>(null);
   const RANDOM_MOBS = getRandomNumbers(4);
 
   useEffect(() => {
@@ -44,22 +46,62 @@ const Main = () => {
     Cookies.set('randomChar', newChar.toString());
   }, []);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (bannerRef.current) {
+        const rect = bannerRef.current.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        
+        let progress = 0;
+        if (rect.top <= 0) {
+          progress = Math.min(Math.abs(rect.top) / (viewportHeight * 0.5), 1);
+        }
+        setScrollProgress(progress);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const getLogoStyle = () => {
+    const opacity = Math.max(0, 1 - scrollProgress * 1.5);
+    return {
+      opacity,
+      transform: `translateY(${-100 * scrollProgress}px) scale(${1 - (0.2 * scrollProgress)})`,
+      transition: 'transform 0.1s ease-out, opacity 0.1s ease-out',
+    };
+  };
+
   return (
     <div className="main">
       <Header />
       <div 
+        ref={bannerRef}
         className="banner"
         style={{
           backgroundImage: `url(/cities/${randomCity}.jpg)`,
         }}
       >
-        <div className="banner-char"
-        style={{
-          backgroundImage: `url(/chars/${randomChar}.webp)`,
-        }}
+        <div 
+          className="banner-char"
+          style={{
+            backgroundImage: `url(/chars/${randomChar}.webp)`,
+          }}
         ></div>
-        <div className="banner-content">
-          <img src="/logotipo.png" alt="Logotipo" className="banner-logo" />
+        <div 
+          className="banner-content"
+        >
+          <div 
+            className="banner-logo-container"
+            style={getLogoStyle()}
+          >
+            <img 
+              src="/logotipo.png" 
+              alt="Logotipo" 
+              className="banner-logo"
+            />
+          </div>
           <h1>¡Bienvenido!</h1>
           <p>Tu aventura comienza aquí</p>
         </div>
