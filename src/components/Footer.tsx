@@ -1,47 +1,64 @@
-const Footer = () => {
-  return (
-    <footer className="footer">
-      <div className="footer-content">
-        <div className="footer-section">
-          <h3>Créditos</h3>
-          <p>
-            Sitio web creado por{' '}
-            <a href="https://github.com/ozcodx" target="_blank" rel="noopener noreferrer">
-              Ozcodx
-            </a>{' '}
-            y{' '}
-            <a href="https://github.com/Bernalopithecus" target="_blank" rel="noopener noreferrer">
-              Bernalopithecus
-            </a>
-          </p>
-        </div>
-        
-        <div className="footer-section">
-          <h3>Información Legal</h3>
-          <p>
-            Todas las marcas comerciales mencionadas en este sitio son propiedad de sus respectivos dueños.
-          </p>
-          <p>
-            El uso de descripciones como "Ragnarok" y "servidor privado de Ragnarok" es completamente legal 
-            y cumple con las leyes vigentes.
-          </p>
-          
-        </div>
+import { useEffect, useRef, useState } from 'react';
 
-        <div className="footer-section">
-          <h3>Aviso</h3>
+const Footer = () => {
+  const [isVisible, setIsVisible] = useState(false);
+  const footerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          setIsVisible(entry.isIntersecting);
+        });
+      },
+      {
+        threshold: 0.1,
+        rootMargin: '-50px 0px',
+      }
+    );
+
+    if (footerRef.current) {
+      observer.observe(footerRef.current);
+    }
+
+    return () => {
+      if (footerRef.current) {
+        observer.unobserve(footerRef.current);
+      }
+    };
+  }, []);
+
+  return (
+    <footer ref={footerRef} className="footer">
+      <div className="footer-content">
+        <div className={`footer-section ${isVisible ? 'visible' : ''}`}>
+          <h3>Sobre Nosotros</h3>
           <p>
-            Este es un servidor privado sin fines de lucro, creado por fans y para fans, 
-            con el objetivo de preservar y compartir la experiencia clásica del juego.
+            Somos un servidor privado de Ragnarök Online enfocado en ofrecer una experiencia 
+            única y balanceada. Nuestro objetivo es mantener la esencia del juego mientras 
+            incorporamos mejoras que lo hacen más disfrutable.
           </p>
+        </div>
+        <div className={`footer-section ${isVisible ? 'visible' : ''}`}>
+          <h3>Características</h3>
           <p>
-            Este es un proyecto independiente y no está afiliado con Gravity Co., Ltd. 
-            o cualquier otra compañía relacionada con Ragnarok Online.
+            • Rates balanceados: 5x/5x/10x<br />
+            • Episodio 14.3 Renewal<br />
+            • Eventos especiales<br />
+            • Misiones únicas<br />
+            • Comunidad amigable
+          </p>
+        </div>
+        <div className={`footer-section ${isVisible ? 'visible' : ''}`}>
+          <h3>Contacto</h3>
+          <p>
+            ¿Tienes dudas o sugerencias? ¡Nos encantaría escucharte!<br />
+            Discord: <a href="https://discord.gg/tuservidor">Únete a nuestra comunidad</a>
           </p>
         </div>
       </div>
-      <div className="footer-bottom">
-        <p>&copy; 2024 OzRagnarok. Todos los derechos reservados.</p>
+      <div className={`footer-bottom ${isVisible ? 'visible' : ''}`}>
+        <p>© 2025 Oz Ragnarok. Todos los derechos reservados.</p>
       </div>
     </footer>
   );
