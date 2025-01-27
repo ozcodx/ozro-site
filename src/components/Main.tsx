@@ -59,7 +59,8 @@ const Main = () => {
         }}
         ></div>
         <div className="banner-content">
-          <h1>Bienvenido a OzRagnarok</h1>
+          <img src="/logotipo.png" alt="Logotipo" className="banner-logo" />
+          <h1>¡Bienvenido!</h1>
           <p>Tu aventura comienza aquí</p>
         </div>
       </div>

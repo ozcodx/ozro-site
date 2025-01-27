@@ -14,7 +14,7 @@ const Header = () => {
       <div className="header-container">
         <div className="logo">
           <Link to="/">
-            <img src="/favicon.ico" alt="OzRagnarok Logo" className="logo-icon" />
+            <img src="/logo.png" alt="OzRagnarok Logo" className="logo-icon" />
             <span>OzRagnarok</span>
           </Link>
         </div>
@@ -23,7 +23,6 @@ const Header = () => {
         </button>
         <nav className={`nav-menu ${isMenuOpen ? 'active' : ''}`}>
           <ul>
-            <li><Link to="/" onClick={toggleMenu}>Inicio</Link></li>
             <li><Link to="/information" onClick={toggleMenu}>Información</Link></li>
             <li><Link to="/database" onClick={toggleMenu}>Base de Datos</Link></li>
             <li><Link to="/ranking" onClick={toggleMenu}>Rankings</Link></li>
