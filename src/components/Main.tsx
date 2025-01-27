@@ -68,23 +68,23 @@ const Main = () => {
         <div className="server-info-grid">
           <InfoCard
             iconUrl={`/mobs/${RANDOM_MOBS[0]}.webp`}
-            title="Experiencia ajustada para un avance dinámico sin perder la esencia clásica."
-            description="Las tasas de experiencia ofrecen un progreso moderado con una base y job EXP de 5x, mientras que los MVPs dan el doble (10x) y las quests un poco menos (3x). Esto permite un crecimiento fluido sin volverse demasiado fácil ni excesivamente lento."
+            title="Un Servidor para Disfrutar sin Presión"
+            description="Aquí no hay carreras ni competencia desmedida. Juega a tu propio ritmo, solo o con amigos, sin preocuparte por perder el progreso. Un lugar ideal para compartir en familia. Además, el servidor lo administramos nosotros, tenemos la garantia de que no se cerrará."
           />
           <InfoCard
             iconUrl={`/mobs/${RANDOM_MOBS[1]}.webp`}
-            title="Un sistema de drop con tasas mejoradas para recompensar el esfuerzo sin perder el valor de los objetos."
-            description="Los drops varían según la categoría: consumibles (20x), equipamiento (30x), y cartas con una tasa del 2% (1% si aplica penalización de nivel). Los ítems de MVPs tienen un drop menor (5x a 15x), manteniendo su rareza. Los tesoros WoE también tienen un drop de 5x para incentivar la competencia."
+            title="Una Experiencia Balanceada y Renovada"
+            description="Disfruta de un servidor Renewal con mecánicas ajustadas y balanceadas. Jugamos en el episodio 14.3 con rates ajustados para un progresión fluida: 5x/5x/10x. Aunque hay bonificaciones y penalizaciones de EXP y el drop varia dependiendo del tipo de item."
           />
           <InfoCard
             iconUrl={`/mobs/${RANDOM_MOBS[2]}.webp`}
-            title="Cambios que mejoran la jugabilidad sin romper la esencia del juego."
-            description="Desde eliminar la misión del primer Job hasta permitir multi level-up y bonificaciones de experiencia en parties, las mecánicas están diseñadas para optimizar la experiencia de juego. Los monstruos pueden hacer críticos, otorgan algo de Zeny al morir y tienen el doble de HP, mientras que los Bosses no pueden curarse en combate."
+            title="Redescubre el Juego con un Nuevo Enfoque."
+            description="Aquí el comercio y la economía no son el centro del juego. Con NPCs personalizados y misiones únicas, todo está diseñado para una experiencia autosuficiente, ideal para jugar solo o en pequeños grupos sin depender de un mercado masivo."
           />
           <InfoCard
             iconUrl={`/mobs/${RANDOM_MOBS[3]}.webp`}
-            title="NPCs y misiones exclusivas para personalizar tu aventura."
-            description="El servidor cuenta con NPCs útiles (Healer, Endower, Reset, etc.), quests personalizadas para obtener equipo y objetos únicos, y una Cash Shop con Job Card Sets, Endow Scrolls y consumibles especiales. Además, las mascotas pueden subir de nivel y participar en combate, agregando una nueva dimensión estratégica."
+            title="Un Mundo en constante Evolución."
+            description="Con ajustes y actualizaciones constantes, la experiencia siempre se mantiene fresca y equilibrada. Además, Tu voz es escuchada, este es un servidor en crecimiento donde las ideas y propuestas de los jugadores pueden dar forma al mundo en el que juegas."
           />
         </div>
       </div>
