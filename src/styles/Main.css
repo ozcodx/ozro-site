@@ -211,11 +211,6 @@ body {
   transform: translateX(0) !important;
 }
 
-.server-info-card.visible:hover {
-  transform: translateY(-5px) !important;
-  transition: transform 0.3s ease;
-}
-
 .card-icon {
   width: 150px;
   height: 250px;
