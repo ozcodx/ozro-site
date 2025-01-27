@@ -25,8 +25,8 @@ const Main = () => {
   const [randomCity, setRandomCity] = useState(Cookies.get('randomCity') || '1');
   const [randomChar, setRandomChar] = useState(Cookies.get('randomChar') || '1');
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [randomMobs] = useState(() => getRandomNumbers(4));
   const bannerRef = useRef<HTMLDivElement>(null);
-  const RANDOM_MOBS = getRandomNumbers(4);
 
   useEffect(() => {
     let newCity;
@@ -109,22 +109,22 @@ const Main = () => {
       <div className="server-info-section">
         <div className="server-info-grid">
           <InfoCard
-            iconUrl={`/mobs/${RANDOM_MOBS[0]}.webp`}
+            iconUrl={`/mobs/${randomMobs[0]}.webp`}
             title="Un Servidor para Disfrutar sin Presión"
             description="Aquí no hay carreras ni competencia desmedida. Juega a tu propio ritmo, solo o con amigos, sin preocuparte por perder el progreso. Un lugar ideal para compartir en familia. Además, el servidor lo administramos nosotros, tenemos la garantia de que no se cerrará."
           />
           <InfoCard
-            iconUrl={`/mobs/${RANDOM_MOBS[1]}.webp`}
+            iconUrl={`/mobs/${randomMobs[1]}.webp`}
             title="Una Experiencia Balanceada y Renovada"
             description="Disfruta de un servidor Renewal con mecánicas ajustadas y balanceadas. Jugamos en el episodio 14.3 con rates ajustados para un progresión fluida: 5x/5x/10x. Aunque hay bonificaciones y penalizaciones de EXP y el drop varia dependiendo del tipo de item."
           />
           <InfoCard
-            iconUrl={`/mobs/${RANDOM_MOBS[2]}.webp`}
+            iconUrl={`/mobs/${randomMobs[2]}.webp`}
             title="Redescubre el Juego con un Nuevo Enfoque."
             description="Aquí el comercio y la economía no son el centro del juego. Con NPCs personalizados y misiones únicas, todo está diseñado para una experiencia autosuficiente, ideal para jugar solo o en pequeños grupos sin depender de un mercado masivo."
           />
           <InfoCard
-            iconUrl={`/mobs/${RANDOM_MOBS[3]}.webp`}
+            iconUrl={`/mobs/${randomMobs[3]}.webp`}
             title="Un Mundo en constante Evolución."
             description="Con ajustes y actualizaciones constantes, la experiencia siempre se mantiene fresca y equilibrada. Además, Tu voz es escuchada, este es un servidor en crecimiento donde las ideas y propuestas de los jugadores pueden dar forma al mundo en el que juegas."
           />
