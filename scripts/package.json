@@ -1,0 +1,13 @@
+{
+  "name": "firestore-upload",
+  "version": "1.0.0",
+  "description": "Script para cargar datos a Firestore",
+  "main": "uploadToFirestore.js",
+  "scripts": {
+    "upload": "node uploadToFirestore.js"
+  },
+  "dependencies": {
+    "firebase": "^10.8.0",
+    "dotenv": "^16.4.1"
+  }
+} 

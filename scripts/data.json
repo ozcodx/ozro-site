@@ -1,0 +1,13 @@
+{
+  "status": {
+    "vpn": "Online",
+    "server": "Online",
+    "players": 42,
+    "ping": "54ms"
+  },
+  "event": {
+    "title": "WoE - Guerra del Emperium",
+    "time": "Domingo 21:00 hrs",
+    "status": "Próximo"
+  }
+} 
