@@ -49,7 +49,7 @@ const ServerStatus = () => {
     const checkVpnStatus = async () => {
       try {
         const startTime = performance.now();
-        const response = await fetch('http://172.26.0.1:3000/health');
+        const response = await fetch('https://172.26.0.1:3000/health');
         const endTime = performance.now();
         const pingTime = Math.round(endTime - startTime);
         

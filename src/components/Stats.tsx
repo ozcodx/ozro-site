@@ -1,129 +1,60 @@
 import { useEffect, useState } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../firebase.js';
+import { collection, query, orderBy, limit, onSnapshot, Timestamp } from 'firebase/firestore';
+import { db } from '../firebase';
+import '../styles/Stats.css';
 
-interface ServerStats {
-  // Estadísticas de Jugadores
-  totalAccounts: number;
-  activeAccounts: number;
-  totalPlayers: number;
-  activePlayers: number;
-  totalGuilds: number;
-  // Estadísticas de Economía
-  totalZeny: number;
-  avgZenyPerPlayer: number;
-  // Estadísticas de Niveles
-  avgLevel: number;
-  maxLevel: {
-    level: number;
-    character: string;
-    others: number;
+interface ServerData {
+  accounts: {
+    activeLastWeek: number;
+    total: number;
   };
-  // Estadísticas de Actividad
-  mvpsToday: number;
-  questsCompleted: number;
+  characters: {
+    activeLast24h: number;
+    averageLevel: number;
+    highestLevel: number;
+    maxLevelCount: number;
+  };
+  economy: {
+    averageZenyPerAccount: number;
+    averageZenyPerChar: number;
+    bankZeny: string;
+    totalZeny: string;
+  };
+  guilds: {
+    total: number;
+  };
+  timestamp: Timestamp;
 }
 
 const Stats = () => {
-  const [stats, setStats] = useState<ServerStats>({
-    totalAccounts: 0,
-    activeAccounts: 0,
-    totalPlayers: 0,
-    activePlayers: 0,
-    totalGuilds: 0,
-    totalZeny: 0,
-    avgZenyPerPlayer: 0,
-    avgLevel: 0,
-    maxLevel: {
-      level: 0,
-      character: 'N/A',
-      others: 0
-    },
-    mvpsToday: 0,
-    questsCompleted: 0
-  });
+  const [serverData, setServerData] = useState<ServerData | null>(null);
+
+  const formatTimestamp = (timestamp: Timestamp) => {
+    const date = timestamp.toDate();
+    return date.toLocaleString('es-ES', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+  };
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        // Obtener datos de personajes y cuentas
-        const charSnapshot = await getDocs(collection(db, 'char'));
-        const accountDataSnapshot = await getDocs(collection(db, 'account-data'));
-        const loginSnapshot = await getDocs(collection(db, 'login'));
-        
-        let totalPlayers = charSnapshot.size;
-        let totalZeny = 0;
-        let totalLevel = 0;
-        let maxLevel = 0;
-        let maxLevelChar = 'N/A';
-        let maxLevelCount = 0;
+        const serverDataRef = collection(db, 'server-data');
+        const q = query(serverDataRef, orderBy('timestamp', 'desc'), limit(1));
 
-        // Calcular cuentas activas en los últimos 7 días
-        const sevenDaysAgo = new Date();
-        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-        
-        let activeAccounts = 0;
-        loginSnapshot.forEach(doc => {
-          const data = doc.data();
-          if (data.lastlogin) {
-            const lastLogin = new Date(data.lastlogin);
-            if (lastLogin >= sevenDaysAgo) {
-              activeAccounts++;
-            }
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+          if (!snapshot.empty) {
+            const data = snapshot.docs[0].data() as ServerData;
+            setServerData(data);
           }
         });
 
-        // Primer recorrido para encontrar el nivel máximo
-        charSnapshot.forEach(doc => {
-          const data = doc.data();
-          const level = Number(data.base_level || 0);
-          if (level > maxLevel) {
-            maxLevel = level;
-          }
-        });
-
-        // Segundo recorrido para contar personajes en nivel máximo y procesar otros datos
-        charSnapshot.forEach(doc => {
-          const data = doc.data();
-          totalZeny += Number(data.zeny || 0);
-          const level = Number(data.base_level || 0);
-          totalLevel += level;
-
-          if (level === maxLevel) {
-            maxLevelCount++;
-            if (maxLevelCount === 1) {
-              maxLevelChar = data.name || 'N/A';
-            }
-          }
-        });
-
-        // Sumar zeny de las bóvedas de banco
-        accountDataSnapshot.forEach(doc => {
-          const data = doc.data();
-          totalZeny += Number(data.bank_vault || 0);
-        });
-
-        // Establecer estadísticas
-        setStats({
-          // Datos reales
-          totalPlayers,
-          totalZeny,
-          totalAccounts: loginSnapshot.size,
-          activeAccounts,
-          avgLevel: totalPlayers > 0 ? Math.round(totalLevel / totalPlayers) : 0,
-          maxLevel: {
-            level: maxLevel,
-            character: maxLevelChar,
-            others: Math.max(0, maxLevelCount - 1)
-          },
-          // Datos mock restantes
-          activePlayers: 8,
-          totalGuilds: 3,
-          avgZenyPerPlayer: Math.round(totalZeny / totalPlayers),
-          mvpsToday: 12,
-          questsCompleted: 156
-        });
-
+        return () => unsubscribe();
       } catch (error) {
         console.error('Error al obtener estadísticas:', error);
       }
@@ -132,84 +63,82 @@ const Stats = () => {
     fetchStats();
   }, []);
 
-  const formatNumber = (num: number): string => {
-    return num.toLocaleString('es-ES');
-  };
-
-  const formatMaxLevel = () => {
-    const { level, character, others } = stats.maxLevel;
-    if (level === 0) return 'N/A';
-    if (others === 0) return `${level} (${character})`;
-    return `${level} (${character} y ${others} más)`;
-  };
+  if (!serverData) {
+    return <div className="stats-loading">Cargando estadísticas...</div>;
+  }
 
   return (
-    <div className="info-content">
-      <h2>Estadísticas del Servidor</h2>
-      <div className="content-section">
-        <h3>Comunidad y Jugadores</h3>
-        <p>
-          Información sobre nuestra comunidad y su actividad reciente:
-        </p>
-        <ul>
-          <li>
-            <strong>Total de Cuentas Registradas:</strong> {formatNumber(stats.totalAccounts)}
-          </li>
-          <li>
-            <strong>Cuentas Activas (7 días):</strong> {formatNumber(stats.activeAccounts)}
-          </li>
-          <li>
-            <strong>Total de Personajes:</strong> {formatNumber(stats.totalPlayers)}
-          </li>
-          <li>
-            <strong>Personajes Activos (24h):</strong> {formatNumber(stats.activePlayers)} *
-          </li>
-          <li>
-            <strong>Total de Guilds:</strong> {formatNumber(stats.totalGuilds)} *
-          </li>
-        </ul>
+    <div className="stats-container">
+      <div className="stats-section">
+        <h3>Cuentas</h3>
+        <div className="stats-grid">
+          <div className="stat-item">
+            <span className="stat-label">Total de Cuentas</span>
+            <span className="stat-value">{serverData.accounts.total}</span>
+          </div>
+          <div className="stat-item">
+            <span className="stat-label">Activas (última semana)</span>
+            <span className="stat-value">{serverData.accounts.activeLastWeek}</span>
+          </div>
+        </div>
+      </div>
 
-        <h3>Progreso y Niveles</h3>
-        <p>
-          Estadísticas sobre el avance y desarrollo de los personajes:
-        </p>
-        <ul>
-          <li>
-            <strong>Nivel más Alto:</strong> {formatMaxLevel()}
-          </li>
-          <li>
-            <strong>Nivel Promedio:</strong> {stats.avgLevel}
-          </li>
-        </ul>
+      <div className="stats-section">
+        <h3>Personajes</h3>
+        <div className="stats-grid">
+          <div className="stat-item">
+            <span className="stat-label">Activos (últimas 24h)</span>
+            <span className="stat-value">{serverData.characters.activeLast24h}</span>
+          </div>
+          <div className="stat-item">
+            <span className="stat-label">Nivel Promedio</span>
+            <span className="stat-value">{serverData.characters.averageLevel}</span>
+          </div>
+          <div className="stat-item">
+            <span className="stat-label">Nivel más Alto</span>
+            <span className="stat-value">{serverData.characters.highestLevel}</span>
+          </div>
+          <div className="stat-item">
+            <span className="stat-label">Personajes Nivel Máximo</span>
+            <span className="stat-value">{serverData.characters.maxLevelCount}</span>
+          </div>
+        </div>
+      </div>
 
+      <div className="stats-section">
         <h3>Economía</h3>
-        <p>
-          Estado actual de la economía del servidor:
-        </p>
-        <ul>
-          <li>
-            <strong>Zeny Total en Circulación:</strong> {formatNumber(stats.totalZeny)} z
-          </li>
-          <li>
-            <strong>Zeny Promedio por Jugador:</strong> {formatNumber(stats.avgZenyPerPlayer)} z
-          </li>
-        </ul>
+        <div className="stats-grid">
+          <div className="stat-item">
+            <span className="stat-label">Zeny Total</span>
+            <span className="stat-value">{parseInt(serverData.economy.totalZeny).toLocaleString()}</span>
+          </div>
+          <div className="stat-item">
+            <span className="stat-label">Zeny en Banco</span>
+            <span className="stat-value">{parseInt(serverData.economy.bankZeny).toLocaleString()}</span>
+          </div>
+          <div className="stat-item">
+            <span className="stat-label">Promedio por Cuenta</span>
+            <span className="stat-value">{serverData.economy.averageZenyPerAccount.toLocaleString()}</span>
+          </div>
+          <div className="stat-item">
+            <span className="stat-label">Promedio por Personaje</span>
+            <span className="stat-value">{serverData.economy.averageZenyPerChar.toLocaleString()}</span>
+          </div>
+        </div>
+      </div>
 
-        <h3>Actividad Diaria</h3>
-        <p>
-          Resumen de las actividades realizadas en el servidor:
-        </p>
-        <ul>
-          <li>
-            <strong>MVPs Derrotados Hoy:</strong> {formatNumber(stats.mvpsToday)} *
-          </li>
-          <li>
-            <strong>Quests Completadas:</strong> {formatNumber(stats.questsCompleted)} *
-          </li>
-        </ul>
-        <p className="stats-note">
-          * Datos simulados para desarrollo
-        </p>
+      <div className="stats-section">
+        <h3>Guilds</h3>
+        <div className="stats-grid">
+          <div className="stat-item">
+            <span className="stat-label">Total de Guilds</span>
+            <span className="stat-value">{serverData.guilds.total}</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="stats-timestamp">
+        Última actualización: {formatTimestamp(serverData.timestamp)}
       </div>
     </div>
   );
