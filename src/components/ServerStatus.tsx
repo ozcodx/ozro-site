@@ -1,7 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import '../styles/ServerStatus.css';
-import { collection, query, onSnapshot, Timestamp } from 'firebase/firestore';
-import { db } from '../firebase.js';
 
 interface StatusItemProps {
   title: string;
@@ -17,7 +15,6 @@ interface ServerStatusData {
   'event-date': string;
   players: number;
   ping: number;
-  timestamp?: Timestamp;
 }
 
 const StatusItem = ({ title, icon, value, type = 'status' }: StatusItemProps) => (
@@ -39,12 +36,43 @@ const ServerStatus = () => {
   const statusRef = useRef<HTMLDivElement>(null);
   const [statusData, setStatusData] = useState<ServerStatusData>({
     vpn: 'Offline',
-    server: 'Offline',
+    server: 'Online',
     'event-name': 'Por definir',
     'event-date': 'Por definir',
     players: 0,
     ping: 0
   });
+
+  useEffect(() => {
+    const checkVpnStatus = async () => {
+      try {
+        const startTime = performance.now();
+        const response = await fetch('http://172.26.0.1:3000/health');
+        const endTime = performance.now();
+        const pingTime = Math.round(endTime - startTime);
+        
+        const vpnStatus = response.status === 200 ? 'Online' : 'Offline';
+        setStatusData(prev => ({ 
+          ...prev, 
+          vpn: vpnStatus,
+          ping: pingTime
+        }));
+      } catch (error) {
+        console.error('Error al consultar estado de VPN:', error);
+        setStatusData(prev => ({ 
+          ...prev, 
+          vpn: 'Offline',
+          ping: 0
+        }));
+      }
+    };
+
+    checkVpnStatus();
+
+    const interval = setInterval(checkVpnStatus, 30000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -68,25 +96,6 @@ const ServerStatus = () => {
         observer.unobserve(statusRef.current);
       }
     };
-  }, []);
-
-  useEffect(() => {
-    try {
-      const serverStatusRef = collection(db, 'server-status');
-      const q = query(serverStatusRef);
-
-      const unsubscribe = onSnapshot(q, (snapshot) => {
-        if (!snapshot.empty) {
-          const doc = snapshot.docs[0];
-          const data = doc.data() as ServerStatusData;
-          setStatusData(data);
-        }
-      });
-
-      return () => unsubscribe();
-    } catch (error) {
-      console.error('Error al conectar con Firestore:', error);
-    }
   }, []);
 
   return (
