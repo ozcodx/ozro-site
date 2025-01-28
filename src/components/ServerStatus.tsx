@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import '../styles/ServerStatus.css';
+import { collection, query, onSnapshot } from 'firebase/firestore';
+import { db } from '../firebase.js';
 
 interface StatusItemProps {
   title: string;
@@ -40,7 +42,7 @@ const ServerStatus = () => {
     'event-name': 'Por definir',
     'event-date': 'Por definir',
     players: 0,
-    ping: 0
+    ping: -1
   });
 
   useEffect(() => {
@@ -62,7 +64,7 @@ const ServerStatus = () => {
         setStatusData(prev => ({ 
           ...prev, 
           vpn: 'Offline',
-          ping: 0
+          ping: -1
         }));
       }
     };
@@ -72,6 +74,30 @@ const ServerStatus = () => {
     const interval = setInterval(checkVpnStatus, 30000);
 
     return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    try {
+      const serverStatusRef = collection(db, 'server-status');
+      const q = query(serverStatusRef);
+
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        if (!snapshot.empty) {
+          const doc = snapshot.docs[0];
+          const data = doc.data();
+          setStatusData(prev => ({
+            ...prev,
+            players: data.players || 0,
+            'event-name': data['event-name'] || 'Por definir',
+            'event-date': data['event-date'] || 'Por definir'
+          }));
+        }
+      });
+
+      return () => unsubscribe();
+    } catch (error) {
+      console.error('Error al conectar con Firestore:', error);
+    }
   }, []);
 
   useEffect(() => {
@@ -142,7 +168,7 @@ const ServerStatus = () => {
           <StatusItem 
             title="Ping"
             icon="/icons/ping.gif"
-            value={`${statusData.ping}ms`}
+            value={statusData.ping === -1 ? '---' : `${statusData.ping} ms`}
             type="number"
           />
         </div>
