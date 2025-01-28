@@ -1,19 +1,27 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Main from './components/Main';
-import NotFound from './components/NotFound';
-import Information from './components/Information';
+import { lazy, Suspense } from 'react';
 import ScrollToTop from './components/ScrollToTop';
 import './App.css';
+
+const Main = lazy(() => import('./components/Main'));
+const Information = lazy(() => import('./components/Information'));
+const NotFound = lazy(() => import('./components/NotFound'));
 
 const App = () => {
   return (
     <BrowserRouter>
       <ScrollToTop />
-      <Routes>
-        <Route path="/" element={<Main />} />
-        <Route path="/information" element={<Information />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <Suspense fallback={
+        <div className="loading-screen">
+          <img src="/logo.png" alt="Cargando..." className="loading-logo" />
+        </div>
+      }>
+        <Routes>
+          <Route path="/" element={<Main />} />
+          <Route path="/information" element={<Information />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Suspense>
     </BrowserRouter>
   );
 };
