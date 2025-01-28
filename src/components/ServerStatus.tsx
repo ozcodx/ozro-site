@@ -38,8 +38,8 @@ const ServerStatus = () => {
   const [isVisible, setIsVisible] = useState(false);
   const statusRef = useRef<HTMLDivElement>(null);
   const [statusData, setStatusData] = useState<ServerStatusData>({
-    vpn: 'Indeterminado',
-    server: 'Indeterminado',
+    vpn: 'Offline',
+    server: 'Offline',
     'event-name': 'Por definir',
     'event-date': 'Por definir',
     players: 0,

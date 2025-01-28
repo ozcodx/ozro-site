@@ -1,11 +1,13 @@
 import { ReactNode } from 'react';
 import '../styles/Information.css';
+import Stats from './Stats';
 
 interface InfoContentProps {
   selectedSection: string;
 }
 
 const contentMap: Record<string, ReactNode> = {
+  'stats': <Stats />,
   'features': (
     <div className="info-content">
       <h2>Especificaciones</h2>
