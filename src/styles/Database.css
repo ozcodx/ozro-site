@@ -296,7 +296,9 @@
   min-height: 400px;
   max-height: calc(100vh - 400px);
   overflow-y: auto;
+  overflow-x: hidden;
   padding-right: 0.75rem;
+  width: 100%;
 }
 
 /* Estilos del scrollbar */
@@ -330,29 +332,152 @@
 }
 
 .results-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 1rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .result-card {
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.9);
   border-radius: 8px;
   padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   transition: all 0.2s ease;
+  border: 1px solid #e0e0e0;
 }
 
 .result-card:hover {
-  background: rgba(255, 255, 255, 0.9);
   transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.result-card h3 {
-  margin: 0;
-  font-size: 1rem;
-  color: #333;
-  font-weight: 500;
+.result-card-content {
+  display: flex;
+  gap: 1rem;
 }
+
+.result-card-image {
+  flex: 0 0 auto;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 4px;
+  padding: 0.5rem;
+}
+
+.result-card-image img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.result-card-info {
+  flex: 1;
+}
+
+.result-card-header {
+  margin-bottom: 1rem;
+}
+
+.result-card-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.result-card-title h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #333;
+  font-weight: 600;
+}
+
+.small-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.result-card-id {
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: normal;
+}
+
+.result-card-section {
+  margin-top: 0.5rem;
+}
+
+.result-card-properties {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.5rem;
+}
+
+.result-card-property {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 4px;
+}
+
+.property-label {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.property-value {
+  font-weight: 500;
+  color: #333;
+}
+
+/* Contenedor para scripts y textos largos */
+.result-card-script {
+  font-family: monospace;
+  font-size: 0.85rem;
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 4px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* Clases de utilidad para mostrar/ocultar elementos */
+.result-card-hidden {
+  display: none;
+}
+
+/* Botón para expandir/colapsar secciones */
+.result-card-toggle {
+  background: transparent;
+  border: none;
+  color: #666;
+  font-size: 0.9rem;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.result-card-toggle:hover {
+  color: #333;
+}
+
+/* Estilos para diferentes tipos de valores */
+.value-positive { color: #2ecc71; }
+.value-negative { color: #e74c3c; }
+.value-neutral { color: #3498db; }
+.value-warning { color: #f1c40f; }
 
 .no-results {
   text-align: center;
@@ -395,6 +520,21 @@
 
   .results-section {
     max-height: calc(100vh - 300px);
+  }
+}
+
+@media (max-width: 640px) {
+  .result-card-content {
+    flex-direction: column;
+  }
+
+  .result-card-image {
+    width: 100%;
+    height: 120px;
+  }
+
+  .result-card-properties {
+    grid-template-columns: 1fr;
   }
 }
 

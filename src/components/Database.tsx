@@ -29,6 +29,13 @@ interface SearchState {
 
 const RESULTS_PER_PAGE = 10;
 
+const formatItemName = (name: string) => {
+  return name
+    .split('_')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+};
+
 const Database = () => {
   const [activeTab, setActiveTab] = useState<TabType>('items');
   const [searchTerm, setSearchTerm] = useState('');
@@ -114,13 +121,19 @@ const Database = () => {
                        options.searchByDescription ? 'description' : 'name_english';
     
     let baseQuery;
+    const searchTermLower = searchTerm.toLowerCase();
+
     if (options.exactMatch) {
-      baseQuery = query(dbRef, where(searchField, '==', searchTerm));
+      baseQuery = query(
+        dbRef,
+        where(searchField, '>=', searchTermLower),
+        where(searchField, '<=', searchTermLower + '\uf8ff')
+      );
     } else {
       baseQuery = query(
         dbRef,
-        where(searchField, '>=', searchTerm),
-        where(searchField, '<=', searchTerm + '\uf8ff')
+        where(searchField, '>=', searchTermLower),
+        where(searchField, '<=', searchTermLower + '\uf8ff')
       );
     }
 
@@ -150,13 +163,19 @@ const Database = () => {
                        options.searchByMap ? 'map' : 'iName';
     
     let baseQuery;
+    const searchTermLower = searchTerm.toLowerCase();
+
     if (options.exactMatch) {
-      baseQuery = query(dbRef, where(searchField, '==', searchTerm));
+      baseQuery = query(
+        dbRef,
+        where(searchField, '>=', searchTermLower),
+        where(searchField, '<=', searchTermLower + '\uf8ff')
+      );
     } else {
       baseQuery = query(
         dbRef,
-        where(searchField, '>=', searchTerm),
-        where(searchField, '<=', searchTerm + '\uf8ff')
+        where(searchField, '>=', searchTermLower),
+        where(searchField, '<=', searchTermLower + '\uf8ff')
       );
     }
 
@@ -346,7 +365,40 @@ const Database = () => {
                 <div className="results-grid">
                   {searchState.results.map(result => (
                     <div key={result.id} className="result-card">
-                      <h3>{activeTab === 'items' ? result.name_english : result.iName}</h3>
+                      <div className="result-card-content">
+                        <div className="result-card-image">
+                          <img src={`https://file5s.ratemyserver.net/items/large/${result.id}.gif`} alt={result.name_english} />
+                        </div>
+                        <div className="result-card-info">
+                          <div className="result-card-header">
+                            <div className="result-card-title">
+                              <img 
+                                src={`https://file5s.ratemyserver.net/items/small/${result.id}.gif`} 
+                                alt={result.name_english}
+                                className="small-icon"
+                              />
+                              <h3>{formatItemName(result.name_english)}</h3>
+                              <span className="result-card-id">({result.id})</span>
+                            </div>
+                          </div>
+                          <div className="result-card-section">
+                            <div className="result-card-properties">
+                              <div className="result-card-property">
+                                <span className="property-label">ATK/MATK</span>
+                                <span className="property-value">{`${result.atk}/${result.matk}`}</span>
+                              </div>
+                              <div className="result-card-property">
+                                <span className="property-label">DEF</span>
+                                <span className="property-value">{result.defence}</span>
+                              </div>
+                              <div className="result-card-property">
+                                <span className="property-label">Precio</span>
+                                <span className="property-value">{`${result.price_buy}/${result.price_sell}`}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
