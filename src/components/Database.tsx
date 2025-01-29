@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs, limit, startAfter } from 'firebase/firestore';
 import { db } from '../firebase';
 import Header from './Header';
 import Footer from './Footer';
@@ -21,11 +21,24 @@ interface SearchOptions {
   includeMiniBoss?: boolean;
 }
 
+interface SearchState {
+  results: SearchResult[];
+  lastVisible: any | null;
+  hasMore: boolean;
+}
+
+const RESULTS_PER_PAGE = 10;
+
 const Database = () => {
   const [activeTab, setActiveTab] = useState<TabType>('items');
   const [searchTerm, setSearchTerm] = useState('');
   const [isSearching, setIsSearching] = useState(false);
-  const [results, setResults] = useState<SearchResult[]>([]);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [searchState, setSearchState] = useState<SearchState>({
+    results: [],
+    lastVisible: null,
+    hasMore: true
+  });
   const [isOptionsVisible, setIsOptionsVisible] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [searchOptions, setSearchOptions] = useState<SearchOptions>({
@@ -39,7 +52,11 @@ const Database = () => {
   const searchOptionsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setResults([]);
+    setSearchState({
+      results: [],
+      lastVisible: null,
+      hasMore: true
+    });
     setSearchTerm('');
     setSearchOptions({
       searchById: false,
@@ -91,16 +108,16 @@ const Database = () => {
     }));
   };
 
-  const searchItems = async (searchTerm: string, options: SearchOptions) => {
+  const searchItems = async (searchTerm: string, options: SearchOptions, lastDoc: any = null) => {
     const dbRef = collection(db, 'item-db');
     const searchField = options.searchById ? 'id' : 
                        options.searchByDescription ? 'description' : 'name_english';
     
-    let q;
+    let baseQuery;
     if (options.exactMatch) {
-      q = query(dbRef, where(searchField, '==', searchTerm));
+      baseQuery = query(dbRef, where(searchField, '==', searchTerm));
     } else {
-      q = query(
+      baseQuery = query(
         dbRef,
         where(searchField, '>=', searchTerm),
         where(searchField, '<=', searchTerm + '\uf8ff')
@@ -108,26 +125,35 @@ const Database = () => {
     }
 
     if (!options.includeRefinedItems) {
-      q = query(q, where('refined', '==', false));
+      baseQuery = query(baseQuery, where('refined', '==', false));
     }
 
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
+    let finalQuery = query(baseQuery, limit(RESULTS_PER_PAGE));
+    if (lastDoc) {
+      finalQuery = query(finalQuery, startAfter(lastDoc));
+    }
+
+    const snapshot = await getDocs(finalQuery);
+    return {
+      results: snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })),
+      lastVisible: snapshot.docs[snapshot.docs.length - 1],
+      hasMore: snapshot.docs.length === RESULTS_PER_PAGE
+    };
   };
 
-  const searchMobs = async (searchTerm: string, options: SearchOptions) => {
+  const searchMobs = async (searchTerm: string, options: SearchOptions, lastDoc: any = null) => {
     const dbRef = collection(db, 'mob-db');
     const searchField = options.searchById ? 'ID' :
                        options.searchByMap ? 'map' : 'iName';
     
-    let q;
+    let baseQuery;
     if (options.exactMatch) {
-      q = query(dbRef, where(searchField, '==', searchTerm));
+      baseQuery = query(dbRef, where(searchField, '==', searchTerm));
     } else {
-      q = query(
+      baseQuery = query(
         dbRef,
         where(searchField, '>=', searchTerm),
         where(searchField, '<=', searchTerm + '\uf8ff')
@@ -135,14 +161,23 @@ const Database = () => {
     }
 
     if (!options.includeMiniBoss) {
-      q = query(q, where('is_miniboss', '==', false));
+      baseQuery = query(baseQuery, where('is_miniboss', '==', false));
     }
 
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
+    let finalQuery = query(baseQuery, limit(RESULTS_PER_PAGE));
+    if (lastDoc) {
+      finalQuery = query(finalQuery, startAfter(lastDoc));
+    }
+
+    const snapshot = await getDocs(finalQuery);
+    return {
+      results: snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })),
+      lastVisible: snapshot.docs[snapshot.docs.length - 1],
+      hasMore: snapshot.docs.length === RESULTS_PER_PAGE
+    };
   };
 
   const handleSearch = async (e: React.FormEvent) => {
@@ -151,15 +186,40 @@ const Database = () => {
 
     setIsSearching(true);
     try {
-      const results = await (activeTab === 'items' 
+      const searchResult = await (activeTab === 'items' 
         ? searchItems(searchTerm.trim(), searchOptions)
         : searchMobs(searchTerm.trim(), searchOptions));
       
-      setResults(results);
+      setSearchState({
+        results: searchResult.results,
+        lastVisible: searchResult.lastVisible,
+        hasMore: searchResult.hasMore
+      });
     } catch (error) {
       console.error('Error al buscar:', error);
     } finally {
       setIsSearching(false);
+    }
+  };
+
+  const loadMore = async () => {
+    if (!searchState.lastVisible || !searchState.hasMore || isLoadingMore) return;
+
+    setIsLoadingMore(true);
+    try {
+      const searchResult = await (activeTab === 'items'
+        ? searchItems(searchTerm.trim(), searchOptions, searchState.lastVisible)
+        : searchMobs(searchTerm.trim(), searchOptions, searchState.lastVisible));
+
+      setSearchState({
+        results: searchResult.results,
+        lastVisible: searchResult.lastVisible,
+        hasMore: searchResult.hasMore
+      });
+    } catch (error) {
+      console.error('Error al cargar más resultados:', error);
+    } finally {
+      setIsLoadingMore(false);
     }
   };
 
@@ -281,14 +341,27 @@ const Database = () => {
           </div>
 
           <div className="results-section">
-            {results.length > 0 ? (
-              <div className="results-grid">
-                {results.map(result => (
-                  <div key={result.id} className="result-card">
-                    <h3>{activeTab === 'items' ? result.name_english : result.iName}</h3>
+            {searchState.results.length > 0 ? (
+              <>
+                <div className="results-grid">
+                  {searchState.results.map(result => (
+                    <div key={result.id} className="result-card">
+                      <h3>{activeTab === 'items' ? result.name_english : result.iName}</h3>
+                    </div>
+                  ))}
+                </div>
+                {searchState.hasMore && (
+                  <div className="load-more">
+                    <button 
+                      onClick={loadMore} 
+                      disabled={isLoadingMore}
+                      className="load-more-button"
+                    >
+                      {isLoadingMore ? 'Cargando...' : 'Cargar más'}
+                    </button>
                   </div>
-                ))}
-              </div>
+                )}
+              </>
             ) : (
               <div className="no-results">
                 {searchTerm ? 'No se encontraron resultados' : 'Ingresa un término para buscar'}

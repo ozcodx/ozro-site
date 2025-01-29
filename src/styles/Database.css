@@ -396,4 +396,33 @@
   .results-section {
     max-height: calc(100vh - 300px);
   }
+}
+
+.load-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(224, 224, 224, 0.5);
+}
+
+.load-more-button {
+  padding: 0.75rem 2rem;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  color: #666;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.load-more-button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+}
+
+.load-more-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 } 
