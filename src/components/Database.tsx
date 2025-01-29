@@ -16,7 +16,6 @@ interface SearchOptions {
   searchById: boolean;
   exactMatch: boolean;
   searchByDescription?: boolean;
-  includeRefinedItems?: boolean;
   searchByMap?: boolean;
   includeMiniBoss?: boolean;
   selectedTypes: number[];
@@ -118,8 +117,7 @@ const Database = () => {
   const [searchOptions, setSearchOptions] = useState<SearchOptions>({
     searchById: false,
     exactMatch: false,
-    searchByDescription: false, 
-    includeRefinedItems: true,
+    searchByDescription: false,
     searchByMap: false,
     includeMiniBoss: true,
     selectedTypes: []
@@ -137,7 +135,6 @@ const Database = () => {
       searchById: false,
       exactMatch: false,
       searchByDescription: false,
-      includeRefinedItems: true,
       searchByMap: false,
       includeMiniBoss: true,
       selectedTypes: []
@@ -201,16 +198,20 @@ const Database = () => {
     if (searchTerm.trim()) {
       const searchField = options.searchById ? 'id' : 
                          options.searchByDescription ? 'description' : 'name_english';
+      
+      let processedSearchTerm = searchTerm.trim();
+      if (!options.searchById && !options.searchByDescription) {
+        processedSearchTerm = processedSearchTerm
+          .split(/\s+/)
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+          .join('_');
+      }
 
       if (options.exactMatch) {
-        conditions.push(where(searchField, '==', searchTerm));
+        conditions.push(where(searchField, '==', processedSearchTerm));
       } else {
-        conditions.push(where(searchField, '>=', searchTerm));
+        conditions.push(where(searchField, '>=', processedSearchTerm));
       }
-    }
-
-    if (!options.includeRefinedItems) {
-      conditions.push(where('refined', '==', false));
     }
 
     if (options.selectedTypes.length > 0) {
@@ -396,16 +397,6 @@ const Database = () => {
                               onChange={() => handleOptionChange('searchByDescription')}
                             /> 
                             Buscar en descripción
-                          </label>
-                        </div>
-                        <div className="search-option">
-                          <label>
-                            <input 
-                              type="checkbox" 
-                              checked={searchOptions.includeRefinedItems}
-                              onChange={() => handleOptionChange('includeRefinedItems')}
-                            /> 
-                            Incluir objetos refinados
                           </label>
                         </div>
                         <div className="search-types">

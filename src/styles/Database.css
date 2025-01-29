@@ -366,9 +366,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.03);
+  background: #ffffff;
   border-radius: 4px;
   padding: 0.5rem;
+  border: 1px solid #e0e0e0;
 }
 
 .result-card-image img {
@@ -611,4 +612,55 @@
   height: 24px;
   object-fit: contain;
   margin-top: 0.25rem;
+}
+
+.search-types {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(224, 224, 224, 0.5);
+}
+
+.search-types-title {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.search-types-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.5rem;
+}
+
+.type-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: #333;
+  padding: 0.25rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.type-checkbox:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.type-checkbox input[type="checkbox"] {
+  margin: 0;
+}
+
+.item-type {
+  font-size: 0.85rem;
+  color: #666;
+  font-weight: 500;
+  white-space: nowrap;
+  margin-left: 1rem;
+}
+
+.item-type-weapon, .item-type-ammo {
+  display: flex;
+  gap: 0.25rem;
 } 
