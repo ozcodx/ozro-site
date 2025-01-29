@@ -1,13 +1,15 @@
 {
-  "name": "firestore-upload",
+  "name": "ozro-scripts",
   "version": "1.0.0",
-  "description": "Script para cargar datos a Firestore",
-  "main": "uploadToFirestore.js",
+  "description": "Scripts de utilidad para OzRo",
+  "private": true,
   "scripts": {
-    "upload": "node uploadToFirestore.js"
+    "upload": "node uploadToFirestore.js",
+    "upload-images": "node uploadImages.js"
   },
   "dependencies": {
     "firebase": "^10.8.0",
-    "dotenv": "^16.4.1"
+    "dotenv": "^16.4.1",
+    "mongodb": "^6.3.0"
   }
 } 
