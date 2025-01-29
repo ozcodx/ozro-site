@@ -12,6 +12,15 @@ interface SearchResult {
   [key: string]: any;
 }
 
+interface SearchOptions {
+  searchById: boolean;
+  exactMatch: boolean;
+  searchByDescription?: boolean;
+  includeRefinedItems?: boolean;
+  searchByMap?: boolean;
+  includeMiniBoss?: boolean;
+}
+
 const Database = () => {
   const [activeTab, setActiveTab] = useState<TabType>('items');
   const [searchTerm, setSearchTerm] = useState('');
@@ -19,7 +28,31 @@ const Database = () => {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isOptionsVisible, setIsOptionsVisible] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+  const [searchOptions, setSearchOptions] = useState<SearchOptions>({
+    searchById: false,
+    exactMatch: false,
+    searchByDescription: false,
+    includeRefinedItems: true,
+    searchByMap: false,
+    includeMiniBoss: true
+  });
   const searchOptionsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setResults([]);
+    setSearchTerm('');
+    setSearchOptions({
+      searchById: false,
+      exactMatch: false,
+      searchByDescription: false,
+      includeRefinedItems: true,
+      searchByMap: false,
+      includeMiniBoss: true
+    });
+    if (isOptionsVisible) {
+      handleOptionsClose();
+    }
+  }, [activeTab]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -51,29 +84,78 @@ const Database = () => {
     }, 300); // Duración de la animación
   };
 
+  const handleOptionChange = (option: keyof SearchOptions) => {
+    setSearchOptions(prev => ({
+      ...prev,
+      [option]: !prev[option]
+    }));
+  };
+
+  const searchItems = async (searchTerm: string, options: SearchOptions) => {
+    const dbRef = collection(db, 'item-db');
+    const searchField = options.searchById ? 'id' : 
+                       options.searchByDescription ? 'description' : 'name_english';
+    
+    let q;
+    if (options.exactMatch) {
+      q = query(dbRef, where(searchField, '==', searchTerm));
+    } else {
+      q = query(
+        dbRef,
+        where(searchField, '>=', searchTerm),
+        where(searchField, '<=', searchTerm + '\uf8ff')
+      );
+    }
+
+    if (!options.includeRefinedItems) {
+      q = query(q, where('refined', '==', false));
+    }
+
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+  };
+
+  const searchMobs = async (searchTerm: string, options: SearchOptions) => {
+    const dbRef = collection(db, 'mob-db');
+    const searchField = options.searchById ? 'ID' :
+                       options.searchByMap ? 'map' : 'iName';
+    
+    let q;
+    if (options.exactMatch) {
+      q = query(dbRef, where(searchField, '==', searchTerm));
+    } else {
+      q = query(
+        dbRef,
+        where(searchField, '>=', searchTerm),
+        where(searchField, '<=', searchTerm + '\uf8ff')
+      );
+    }
+
+    if (!options.includeMiniBoss) {
+      q = query(q, where('is_miniboss', '==', false));
+    }
+
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+  };
+
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchTerm.trim()) return;
 
     setIsSearching(true);
     try {
-      const collectionName = activeTab === 'items' ? 'item-db' : 'mob-db';
-      const searchField = activeTab === 'items' ? 'name_english' : 'iName';
+      const results = await (activeTab === 'items' 
+        ? searchItems(searchTerm.trim(), searchOptions)
+        : searchMobs(searchTerm.trim(), searchOptions));
       
-      const dbRef = collection(db, collectionName);
-      const q = query(
-        dbRef,
-        where(searchField, '>=', searchTerm),
-        where(searchField, '<=', searchTerm + '\uf8ff')
-      );
-
-      const snapshot = await getDocs(q);
-      const searchResults = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-
-      setResults(searchResults);
+      setResults(results);
     } catch (error) {
       console.error('Error al buscar:', error);
     } finally {
@@ -127,14 +209,71 @@ const Database = () => {
                   <div className={`search-options-panel ${isClosing ? 'closing' : ''}`}>
                     <div className="search-option">
                       <label>
-                        <input type="checkbox" /> Buscar por ID
+                        <input 
+                          type="checkbox" 
+                          checked={searchOptions.searchById}
+                          onChange={() => handleOptionChange('searchById')}
+                        /> 
+                        Buscar por ID
                       </label>
                     </div>
                     <div className="search-option">
                       <label>
-                        <input type="checkbox" /> Búsqueda exacta
+                        <input 
+                          type="checkbox" 
+                          checked={searchOptions.exactMatch}
+                          onChange={() => handleOptionChange('exactMatch')}
+                        /> 
+                        Búsqueda exacta
                       </label>
                     </div>
+                    {activeTab === 'items' ? (
+                      <>
+                        <div className="search-option">
+                          <label>
+                            <input 
+                              type="checkbox" 
+                              checked={searchOptions.searchByDescription}
+                              onChange={() => handleOptionChange('searchByDescription')}
+                            /> 
+                            Buscar en descripción
+                          </label>
+                        </div>
+                        <div className="search-option">
+                          <label>
+                            <input 
+                              type="checkbox" 
+                              checked={searchOptions.includeRefinedItems}
+                              onChange={() => handleOptionChange('includeRefinedItems')}
+                            /> 
+                            Incluir objetos refinados
+                          </label>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="search-option">
+                          <label>
+                            <input 
+                              type="checkbox" 
+                              checked={searchOptions.searchByMap}
+                              onChange={() => handleOptionChange('searchByMap')}
+                            /> 
+                            Buscar por mapa
+                          </label>
+                        </div>
+                        <div className="search-option">
+                          <label>
+                            <input 
+                              type="checkbox" 
+                              checked={searchOptions.includeMiniBoss}
+                              onChange={() => handleOptionChange('includeMiniBoss')}
+                            /> 
+                            Incluir mini-jefes
+                          </label>
+                        </div>
+                      </>
+                    )}
                   </div>
                 )}
               </div>
