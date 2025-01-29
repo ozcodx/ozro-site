@@ -367,13 +367,16 @@ const Database = () => {
                     <div key={result.id} className="result-card">
                       <div className="result-card-content">
                         <div className="result-card-image">
-                          <img src={`https://file5s.ratemyserver.net/items/large/${result.id}.gif`} alt={result.name_english} />
+                          <img 
+                            src="/placeholder.png"
+                            alt={result.name_english}
+                          />
                         </div>
                         <div className="result-card-info">
                           <div className="result-card-header">
                             <div className="result-card-title">
                               <img 
-                                src={`https://file5s.ratemyserver.net/items/small/${result.id}.gif`} 
+                                src="/placeholder.png"
                                 alt={result.name_english}
                                 className="small-icon"
                               />
