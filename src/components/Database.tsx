@@ -19,6 +19,7 @@ interface SearchOptions {
   includeRefinedItems?: boolean;
   searchByMap?: boolean;
   includeMiniBoss?: boolean;
+  selectedTypes: number[];
 }
 
 interface SearchState {
@@ -28,6 +29,72 @@ interface SearchState {
 }
 
 const RESULTS_PER_PAGE = 10;
+
+const ITEM_TYPES = {
+  0: 'Healing item',
+  2: 'Usable item',
+  3: 'Etc item',
+  4: 'Weapon',
+  5: 'Armor',
+  6: 'Card',
+  7: 'Pet egg',
+  8: 'Pet equipment',
+  10: 'Ammo',
+  11: 'Delayed Usable',
+  18: 'Usable with Confirmation'
+} as const;
+
+const WEAPON_SUBTYPES = {
+  0: 'Bare fist',
+  1: 'Daggers',
+  2: 'One-handed swords',
+  3: 'Two-handed swords',
+  4: 'One-handed spears',
+  5: 'Two-handed spears',
+  6: 'One-handed axes',
+  7: 'Two-handed axes',
+  8: 'Maces',
+  9: 'Unused',
+  10: 'Staves',
+  11: 'Bows',
+  12: 'Knuckles',
+  13: 'Musical instruments',
+  14: 'Whips',
+  15: 'Books',
+  16: 'Katars',
+  17: 'Revolvers',
+  18: 'Rifles',
+  19: 'Gatling guns',
+  20: 'Shotguns',
+  21: 'Grenade launchers',
+  22: 'Fuuma shurikens',
+  23: 'Two-handed staves'
+} as const;
+
+const AMMO_SUBTYPES = {
+  1: 'Arrows',
+  2: 'Throwable daggers',
+  3: 'Bullets',
+  4: 'Shells',
+  5: 'Grenades',
+  6: 'Shuriken',
+  7: 'Kunai',
+  8: 'Cannon balls',
+  9: 'Throwable items'
+} as const;
+
+const getTypeName = (type: number): string => {
+  return ITEM_TYPES[type as keyof typeof ITEM_TYPES] || `Unknown (${type})`;
+};
+
+const getSubtypeName = (type: number, subtype: number): string => {
+  if (type === 4) { // Weapon
+    return WEAPON_SUBTYPES[subtype as keyof typeof WEAPON_SUBTYPES] || `Unknown (${subtype})`;
+  } else if (type === 10) { // Ammo
+    return AMMO_SUBTYPES[subtype as keyof typeof AMMO_SUBTYPES] || `Unknown (${subtype})`;
+  }
+  return '';
+};
 
 const formatItemName = (name: string) => {
   return name
@@ -51,10 +118,11 @@ const Database = () => {
   const [searchOptions, setSearchOptions] = useState<SearchOptions>({
     searchById: false,
     exactMatch: false,
-    searchByDescription: false,
+    searchByDescription: false, 
     includeRefinedItems: true,
     searchByMap: false,
-    includeMiniBoss: true
+    includeMiniBoss: true,
+    selectedTypes: []
   });
   const searchOptionsRef = useRef<HTMLDivElement>(null);
 
@@ -71,7 +139,8 @@ const Database = () => {
       searchByDescription: false,
       includeRefinedItems: true,
       searchByMap: false,
-      includeMiniBoss: true
+      includeMiniBoss: true,
+      selectedTypes: []
     });
     if (isOptionsVisible) {
       handleOptionsClose();
@@ -115,30 +184,42 @@ const Database = () => {
     }));
   };
 
+  const handleTypeToggle = (type: number) => {
+    setSearchOptions(prev => ({
+      ...prev,
+      selectedTypes: prev.selectedTypes.includes(type)
+        ? prev.selectedTypes.filter(t => t !== type)
+        : [...prev.selectedTypes, type]
+    }));
+  };
+
   const searchItems = async (searchTerm: string, options: SearchOptions, lastDoc: any = null) => {
     const dbRef = collection(db, 'item-db');
-    const searchField = options.searchById ? 'id' : 
-                       options.searchByDescription ? 'description' : 'name_english';
-    
-    let baseQuery;
-    const searchTermLower = searchTerm.toLowerCase();
+    let baseQuery = query(dbRef);
+    const conditions: any[] = [];
 
-    if (options.exactMatch) {
-      baseQuery = query(
-        dbRef,
-        where(searchField, '>=', searchTermLower),
-        where(searchField, '<=', searchTermLower + '\uf8ff')
-      );
-    } else {
-      baseQuery = query(
-        dbRef,
-        where(searchField, '>=', searchTermLower),
-        where(searchField, '<=', searchTermLower + '\uf8ff')
-      );
+    if (searchTerm.trim()) {
+      const searchField = options.searchById ? 'id' : 
+                         options.searchByDescription ? 'description' : 'name_english';
+
+      if (options.exactMatch) {
+        conditions.push(where(searchField, '==', searchTerm));
+      } else {
+        conditions.push(where(searchField, '>=', searchTerm));
+      }
     }
 
     if (!options.includeRefinedItems) {
-      baseQuery = query(baseQuery, where('refined', '==', false));
+      conditions.push(where('refined', '==', false));
+    }
+
+    if (options.selectedTypes.length > 0) {
+      const typeStrings = options.selectedTypes.map(type => type.toString());
+      conditions.push(where('type', 'in', typeStrings));
+    }
+
+    if (conditions.length > 0) {
+      baseQuery = query(dbRef, ...conditions);
     }
 
     let finalQuery = query(baseQuery, limit(RESULTS_PER_PAGE));
@@ -159,24 +240,25 @@ const Database = () => {
 
   const searchMobs = async (searchTerm: string, options: SearchOptions, lastDoc: any = null) => {
     const dbRef = collection(db, 'mob-db');
-    const searchField = options.searchById ? 'ID' :
-                       options.searchByMap ? 'map' : 'iName';
-    
-    let baseQuery;
-    const searchTermLower = searchTerm.toLowerCase();
+    let baseQuery = query(dbRef);
 
-    if (options.exactMatch) {
-      baseQuery = query(
-        dbRef,
-        where(searchField, '>=', searchTermLower),
-        where(searchField, '<=', searchTermLower + '\uf8ff')
-      );
-    } else {
-      baseQuery = query(
-        dbRef,
-        where(searchField, '>=', searchTermLower),
-        where(searchField, '<=', searchTermLower + '\uf8ff')
-      );
+    if (searchTerm.trim()) {
+      const searchField = options.searchById ? 'ID' :
+                         options.searchByMap ? 'map' : 'iName';
+      const searchTermLower = searchTerm.toLowerCase();
+
+      if (options.exactMatch) {
+        baseQuery = query(
+          dbRef,
+          where(searchField, '==', searchTermLower)
+        );
+      } else {
+        baseQuery = query(
+          dbRef,
+          where(searchField, '>=', searchTermLower),
+          where(searchField, '<=', searchTermLower + '\uf8ff')
+        );
+      }
     }
 
     if (!options.includeMiniBoss) {
@@ -201,13 +283,11 @@ const Database = () => {
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!searchTerm.trim()) return;
-
     setIsSearching(true);
     try {
       const searchResult = await (activeTab === 'items' 
-        ? searchItems(searchTerm.trim(), searchOptions)
-        : searchMobs(searchTerm.trim(), searchOptions));
+        ? searchItems(searchTerm, searchOptions)
+        : searchMobs(searchTerm, searchOptions));
       
       setSearchState({
         results: searchResult.results,
@@ -328,6 +408,21 @@ const Database = () => {
                             Incluir objetos refinados
                           </label>
                         </div>
+                        <div className="search-types">
+                          <div className="search-types-title">Filtrar por tipo:</div>
+                          <div className="search-types-grid">
+                            {Object.entries(ITEM_TYPES).map(([typeId, typeName]) => (
+                              <label key={typeId} className="type-checkbox">
+                                <input
+                                  type="checkbox"
+                                  checked={searchOptions.selectedTypes.includes(Number(typeId))}
+                                  onChange={() => handleTypeToggle(Number(typeId))}
+                                />
+                                {typeName}
+                              </label>
+                            ))}
+                          </div>
+                        </div>
                       </>
                     ) : (
                       <>
@@ -399,7 +494,15 @@ const Database = () => {
                                     {' '}
                                     <span className="result-card-id">(#{result.id})</span>
                                   </h3>
-                                  <span className="item-type">Tipo: {result.type || '0'}/{result.subtype || '0'}</span>
+                                  <span className="item-type">
+                                    {getTypeName(result.type)}
+                                    {(result.type === 4 || result.type === 10) && result.subtype ? (
+                                      <span className={`item-type-${result.type === 4 ? 'weapon' : 'ammo'}`}>
+                                        {' - '}
+                                        {getSubtypeName(result.type, result.subtype)}
+                                      </span>
+                                    ) : null}
+                                  </span>
                                 </div>
                               </div>
                             </div>
@@ -443,7 +546,9 @@ const Database = () => {
               </>
             ) : (
               <div className="no-results">
-                {searchTerm ? 'No se encontraron resultados' : 'Ingresa un término para buscar'}
+                {searchTerm || searchOptions.selectedTypes.length > 0 
+                  ? 'No se encontraron resultados' 
+                  : 'Ingresa un término para buscar o selecciona tipos de objetos'}
               </div>
             )}
           </div>
@@ -454,4 +559,4 @@ const Database = () => {
   );
 };
 
-export default Database; 
+export default Database;
