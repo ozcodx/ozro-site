@@ -368,20 +368,40 @@ const Database = () => {
                       <div className="result-card-content">
                         <div className="result-card-image">
                           <img 
-                            src="/placeholder.png"
+                            src={result.illustration || result.icon || '/placeholder.png'}
                             alt={result.name_english}
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.src = '/placeholder.png';
+                            }}
                           />
                         </div>
                         <div className="result-card-info">
                           <div className="result-card-header">
                             <div className="result-card-title">
                               <img 
-                                src="/placeholder.png"
+                                src={result.icon || '/placeholder.png'}
                                 alt={result.name_english}
                                 className="small-icon"
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement;
+                                  target.src = '/placeholder.png';
+                                }}
                               />
-                              <h3>{formatItemName(result.name_english)}</h3>
-                              <span className="result-card-id">({result.id})</span>
+                              <div className="title-container">
+                                <div className="title-row">
+                                  <h3>
+                                    <span className="name-title">{formatItemName(result.name_english)}</span>
+                                    {' '}
+                                    <span className="name-details">
+                                      [{result.name_english}/{result.name_japanese || '???'}]
+                                    </span>
+                                    {' '}
+                                    <span className="result-card-id">(#{result.id})</span>
+                                  </h3>
+                                  <span className="item-type">Tipo: {result.type || '0'}/{result.subtype || '0'}</span>
+                                </div>
+                              </div>
                             </div>
                           </div>
                           <div className="result-card-section">
@@ -397,6 +417,10 @@ const Database = () => {
                               <div className="result-card-property">
                                 <span className="property-label">Precio</span>
                                 <span className="property-value">{`${result.price_buy}/${result.price_sell}`}</span>
+                              </div>
+                              <div className="result-card-property">
+                                <span className="property-label">Peso</span>
+                                <span className="property-value">{result.weight}</span>
                               </div>
                             </div>
                           </div>

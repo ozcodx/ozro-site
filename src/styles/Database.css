@@ -387,27 +387,35 @@
 
 .result-card-title {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  align-items: flex-start;
+  gap: 0.75rem;
 }
 
 .result-card-title h3 {
   margin: 0;
   font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.name-title {
   color: #333;
   font-weight: 600;
 }
 
-.small-icon {
-  width: 24px;
-  height: 24px;
-  object-fit: contain;
+.name-details {
+  color: #666;
+  font-style: italic;
+  font-weight: normal;
+  font-size: 0.9rem;
 }
 
 .result-card-id {
-  font-size: 0.9rem;
   color: #666;
   font-weight: normal;
+  font-size: 0.9rem;
 }
 
 .result-card-section {
@@ -565,4 +573,42 @@
 .load-more-button:disabled {
   opacity: 0.7;
   cursor: not-allowed;
+}
+
+.title-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.title-row h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.item-type {
+  font-size: 0.85rem;
+  color: #666;
+  font-weight: 500;
+  white-space: nowrap;
+  margin-left: 1rem;
+}
+
+.small-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  margin-top: 0.25rem;
 } 
