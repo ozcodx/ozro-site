@@ -1,9 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
-import { collection, query, where, getDocs, limit, startAfter } from 'firebase/firestore';
+import { collection, query, where, getDocs, limit, startAfter, doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import Header from './Header';
 import Footer from './Footer';
 import '../styles/Database.css';
+// @ts-ignore
+import lunr from 'lunr';
 
 type TabType = 'items' | 'mobs';
 
@@ -12,8 +14,13 @@ interface SearchResult {
   [key: string]: any;
 }
 
+interface LunrSearchResult {
+  ref: string;
+  score: number;
+  matchData: any;
+}
+
 interface SearchOptions {
-  searchById: boolean;
   exactMatch: boolean;
   searchByDescription?: boolean;
   searchByMap?: boolean;
@@ -115,14 +122,42 @@ const Database = () => {
   const [isOptionsVisible, setIsOptionsVisible] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [searchOptions, setSearchOptions] = useState<SearchOptions>({
-    searchById: false,
     exactMatch: false,
     searchByDescription: false,
     searchByMap: false,
     includeMiniBoss: true,
     selectedTypes: []
   });
+  const [searchIndex, setSearchIndex] = useState<lunr.Index | null>(null);
+  const [searchDocuments, setSearchDocuments] = useState<Record<string, any>>({});
   const searchOptionsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const loadSearchIndex = async () => {
+      try {
+        const [indexResponse, documentsResponse] = await Promise.all([
+          fetch('/data/search-index.json'),
+          fetch('/data/documents.json')
+        ]);
+        
+        const indexData = await indexResponse.json();
+        const documentsData = await documentsResponse.json();
+        
+        setSearchIndex(lunr.Index.load(indexData));
+        const docsMap = documentsData.reduce((acc: Record<string, any>, doc: any) => {
+          acc[doc.id] = doc;
+          return acc;
+        }, {});
+        setSearchDocuments(docsMap);
+      } catch (error) {
+        console.error('Error al cargar el índice de búsqueda:', error);
+      }
+    };
+
+    if (activeTab === 'items') {
+      loadSearchIndex();
+    }
+  }, [activeTab]);
 
   useEffect(() => {
     setSearchState({
@@ -132,7 +167,6 @@ const Database = () => {
     });
     setSearchTerm('');
     setSearchOptions({
-      searchById: false,
       exactMatch: false,
       searchByDescription: false,
       searchByMap: false,
@@ -196,21 +230,48 @@ const Database = () => {
     const conditions: any[] = [];
 
     if (searchTerm.trim()) {
-      const searchField = options.searchById ? 'id' : 
-                         options.searchByDescription ? 'description' : 'name_english';
-      
-      let processedSearchTerm = searchTerm.trim();
-      if (!options.searchById && !options.searchByDescription) {
-        processedSearchTerm = processedSearchTerm
-          .split(/\s+/)
-          .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-          .join('_');
-      }
+      const isNumericSearch = /^\d+$/.test(searchTerm.trim());
 
-      if (options.exactMatch) {
-        conditions.push(where(searchField, '==', processedSearchTerm));
-      } else {
-        conditions.push(where(searchField, '>=', processedSearchTerm));
+      if (isNumericSearch) {
+        const docRef = doc(db, 'item-db', searchTerm.trim());
+        const docSnap = await getDoc(docRef);
+        
+        if (docSnap.exists()) {
+          return {
+            results: [{
+              id: docSnap.id,
+              ...docSnap.data()
+            }],
+            lastVisible: null,
+            hasMore: false
+          };
+        }
+        return {
+          results: [],
+          lastVisible: null,
+          hasMore: false
+        };
+      } else if (searchIndex) {
+        try {
+          const searchResults = searchIndex.search(searchTerm) as LunrSearchResult[];
+          // Tomar solo los 30 resultados más relevantes (los que tienen mayor score)
+          const matchedIds = searchResults
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 30)
+            .map(result => result.ref);
+          
+          if (matchedIds.length > 0) {
+            conditions.push(where('__name__', 'in', matchedIds));
+          } else {
+            return {
+              results: [],
+              lastVisible: null,
+              hasMore: false
+            };
+          }
+        } catch (error) {
+          console.error('Error en la búsqueda con Lunr:', error);
+        }
       }
     }
 
@@ -244,8 +305,7 @@ const Database = () => {
     let baseQuery = query(dbRef);
 
     if (searchTerm.trim()) {
-      const searchField = options.searchById ? 'ID' :
-                         options.searchByMap ? 'map' : 'iName';
+      const searchField = options.searchByMap ? 'map' : 'iName';
       const searchTermLower = searchTerm.toLowerCase();
 
       if (options.exactMatch) {
@@ -350,7 +410,7 @@ const Database = () => {
                     type="text"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder={`Buscar por nombre ${activeTab === 'items' ? 'del objeto' : 'del monstruo'}...`}
+                    placeholder={`Buscar por nombre o ID ${activeTab === 'items' ? 'del objeto' : 'del monstruo'}...`}
                     className="search-input"
                   />
                   <button type="submit" className="search-button" disabled={isSearching}>
@@ -371,16 +431,6 @@ const Database = () => {
                       <label>
                         <input 
                           type="checkbox" 
-                          checked={searchOptions.searchById}
-                          onChange={() => handleOptionChange('searchById')}
-                        /> 
-                        Buscar por ID
-                      </label>
-                    </div>
-                    <div className="search-option">
-                      <label>
-                        <input 
-                          type="checkbox" 
                           checked={searchOptions.exactMatch}
                           onChange={() => handleOptionChange('exactMatch')}
                         /> 
@@ -396,7 +446,7 @@ const Database = () => {
                               checked={searchOptions.searchByDescription}
                               onChange={() => handleOptionChange('searchByDescription')}
                             /> 
-                            Buscar en descripción
+                            Incluir descripción en la búsqueda
                           </label>
                         </div>
                         <div className="search-types">
