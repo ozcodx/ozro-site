@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "upload": "node uploadToFirestore.js",
-    "upload-images": "node uploadImages.js"
+    "upload-images": "node uploadImages.js",
+    "build-index": "node buildSearchIndex.js"
   },
   "dependencies": {
     "dotenv": "^16.3.1",
