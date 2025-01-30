@@ -518,6 +518,14 @@ const Database = () => {
                               </div>
                             </div>
                           </div>
+                          {result.script && (
+                            <div className="result-card-section">
+                              <div className="result-card-script-header">Script:</div>
+                              <pre className="result-card-script">
+                                {result.script}
+                              </pre>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
