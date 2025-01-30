@@ -28,34 +28,40 @@ function cleanDescription(description) {
     cleaned = cleaned.replace(/[:.\_]{2,}/g, ' ')
         .replace(/\s+/g, ' ')
         .trim();
-    
-    return cleaned;
+    // Convertir a minúsculas para que el índice sea case insensitive
+    return cleaned.toLowerCase();
 }
 
-async function processFiles(namesFile, descFile) {
+function cleanName(name) {
+    // Reemplazar _ por espacios y pasar a minúsculas
+    return name.replace(/_/g, ' ').toLowerCase();
+}
+
+async function processNames(namesFile) {
     const names = new Map();
-    const descriptions = new Map();
-    let currentId = null;
-    let currentDescription = [];
-    
-    // Leer archivo de nombres
     const nameLines = fs.readFileSync(namesFile, 'utf-8').split('\n');
     
     for (const line of nameLines) {
         if (line.trim()) {
             const [id, name] = line.split('#');
             if (id && name) {
-                names.set(id.trim(), name.trim().replace(/_/g, ' '));
+                names.set(id.trim(), cleanName(name.trim()));
             }
         }
     }
-    
+    return names;
+}
+
+async function processDescriptions(descFile) {
+    const descriptions = new Map();
+    let currentId = null;
+    let currentDescription = [];
+
     // Leer archivo de descripciones
     const descLines = fs.readFileSync(descFile, 'utf-8').split('\n');
     
     for (const line of descLines) {
         const trimmedLine = line.trim();
-        
         if (trimmedLine === '#') {
             // Si encontramos una línea que es solo #, es el fin de una descripción
             if (currentId && currentDescription.length > 0) {
@@ -70,14 +76,21 @@ async function processFiles(namesFile, descFile) {
             currentDescription.push(trimmedLine);
         }
     }
-    
+
     // Procesar último item si existe
     if (currentId && currentDescription.length > 0) {
         descriptions.set(currentId, cleanDescription(currentDescription.join('\n')));
     }
 
+    return descriptions;
+}
+
+async function processFiles(files) {
+    const names = await processNames(files.namesFile);
+    const descriptions = await processDescriptions(files.descFile);
     // Crear array de documentos para el índice
     const documents = [];
+
     for (const [id, name] of names) {
         if (descriptions.has(id)) {
             documents.push({
@@ -125,7 +138,7 @@ async function processFiles(namesFile, descFile) {
 }
 
 // Ejecutar el proceso
-processFiles(
-    './data/idnum2itemdisplaynametable.txt',
-    './data/idnum2itemdesctable.txt'
-).catch(console.error); 
+processFiles({
+    namesFile: './data/idnum2itemdisplaynametable.txt',
+    descFile: './data/idnum2itemdesctable.txt'
+}).catch(console.error); 
