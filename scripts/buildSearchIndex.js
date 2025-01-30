@@ -1,5 +1,5 @@
 const fs = require('fs');
-const readline = require('readline');
+const lunr = require('lunr');
 
 // Función para limpiar la descripción
 function cleanDescription(description) {
@@ -32,16 +32,14 @@ function cleanDescription(description) {
     return cleaned;
 }
 
-async function processFiles(namesFile, descFile, limit = 1000) {
+async function processFiles(namesFile, descFile) {
     const names = new Map();
     const descriptions = new Map();
     let currentId = null;
     let currentDescription = [];
     
     // Leer archivo de nombres
-    const nameLines = fs.readFileSync(namesFile, 'utf-8')
-        .split('\n')
-        .slice(0, limit);
+    const nameLines = fs.readFileSync(namesFile, 'utf-8').split('\n');
     
     for (const line of nameLines) {
         if (line.trim()) {
@@ -53,9 +51,7 @@ async function processFiles(namesFile, descFile, limit = 1000) {
     }
     
     // Leer archivo de descripciones
-    const descLines = fs.readFileSync(descFile, 'utf-8')
-        .split('\n')
-        .slice(0, limit);
+    const descLines = fs.readFileSync(descFile, 'utf-8').split('\n');
     
     for (const line of descLines) {
         const trimmedLine = line.trim();
@@ -79,23 +75,56 @@ async function processFiles(namesFile, descFile, limit = 1000) {
     if (currentId && currentDescription.length > 0) {
         descriptions.set(currentId, cleanDescription(currentDescription.join('\n')));
     }
-    
-    // Seleccionar un item aleatorio para mostrar como ejemplo
-    const ids = Array.from(descriptions.keys());
-    const randomId = ids[Math.floor(Math.random() * ids.length)];
-    
-    if (randomId) {
-        const exampleItem = {
-            id: randomId,
-            name: names.get(randomId),
-            description: descriptions.get(randomId)
-        };
-        console.log('Ejemplo de item procesado:');
-        console.log(JSON.stringify(exampleItem, null, 2));
+
+    // Crear array de documentos para el índice
+    const documents = [];
+    for (const [id, name] of names) {
+        if (descriptions.has(id)) {
+            documents.push({
+                id: id,
+                name: name,
+                description: descriptions.get(id)
+            });
+        }
     }
+
+    console.log(`Procesados ${documents.length} items`);
+
+    // Construir el índice
+    const idx = lunr(function () {
+        this.ref('id');
+        this.field('name', { boost: 10 }); // Dar más peso al nombre
+        this.field('description');
+
+        // Agregar cada documento al índice
+        documents.forEach(function (doc) {
+            this.add(doc);
+        }, this);
+    });
+
+    // Guardar el índice y los documentos
+    const outputPath = './data';
+    if (!fs.existsSync(outputPath)) {
+        fs.mkdirSync(outputPath, { recursive: true });
+    }
+
+    // Guardar el índice
+    fs.writeFileSync(
+        `${outputPath}/search-index.json`,
+        JSON.stringify(idx)
+    );
+
+    // Guardar los documentos (necesarios para mostrar resultados)
+    fs.writeFileSync(
+        `${outputPath}/documents.json`,
+        JSON.stringify(documents)
+    );
+
+    console.log(`Índice de búsqueda creado en ${outputPath}/search-index.json`);
+    console.log(`Documentos guardados en ${outputPath}/documents.json`);
 }
 
-// Ejemplo de uso
+// Ejecutar el proceso
 processFiles(
     './data/idnum2itemdisplaynametable.txt',
     './data/idnum2itemdesctable.txt'
