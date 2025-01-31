@@ -678,4 +678,48 @@
   font-size: 0.9rem;
   margin-bottom: 0.5rem;
   font-weight: 500;
+}
+
+.result-card-description-header {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: #666;
+}
+
+.result-card-description {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 4px;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  max-height: 150px; /* Altura para mostrar aproximadamente 5 líneas */
+  overflow-y: auto;
+}
+
+.result-card-description-content {
+  margin: 0;
+  white-space: pre-wrap;
+  font-family: inherit;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #333; /* Color oscuro para mejor legibilidad */
+}
+
+/* Estilo para la barra de scroll */
+.result-card-description::-webkit-scrollbar {
+  width: 8px;
+}
+
+.result-card-description::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.result-card-description::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.result-card-description::-webkit-scrollbar-thumb:hover {
+  background: #555;
 } 
