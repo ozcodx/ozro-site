@@ -9,7 +9,29 @@ type TabType = 'items' | 'mobs';
 
 interface SearchResult {
   id: string;
-  [key: string]: any;
+  type: number;
+  subtype: number;
+  atk: number;
+  matk: number;
+  defence: number;
+  price_buy: number;
+  price_sell: number;
+  weight: number;
+  codename1: string;
+  codename2: string;
+  script: string;
+  name: string;
+  description: string;
+  icon: string;
+  illustration: string;
+  // Nuevos campos
+  stack_amount?: number;
+  slots?: number;
+  equip_level_min?: number;
+  equip_level_max?: number;
+  refinable?: boolean;
+  weapon_level?: number;
+  equip_locations?: number[];
 }
 
 interface LunrSearchResult {
@@ -182,6 +204,12 @@ const getJobName = (job: number): string => {
   return JOBS[job as keyof typeof JOBS] || `Unknown (${job})`;
 };
 
+const getEquipLocationsText = (locations: number[]): string => {
+  const locationNames = locations.map(loc => EQUIP_LOCATIONS[loc as keyof typeof EQUIP_LOCATIONS] || `Unknown (${loc})`);
+  const fullText = locationNames.join(', ');
+  return fullText.length > 30 ? fullText.substring(0, 27) + '...' : fullText;
+};
+
 const Database = () => {
   const [activeTab, setActiveTab] = useState<TabType>('items');
   const [searchTerm, setSearchTerm] = useState('');
@@ -302,16 +330,29 @@ const Database = () => {
       ]);
 
       // Obtener el item base y los datos de nombre/descripción
-      const itemData = localData.items[id];
+      const itemData = localData.items[id] || {};
       const nameDescData = localData.nameDesc.find((item: any) => item.id === id);
+
+      // Asegurarnos de que type sea un número
+      const type = Number(itemData.type);
+      console.log('Item type:', type, 'Item ID:', id);
 
       return {
         id,
+        type,
         ...itemData,
         name: nameDescData?.name || '',
         description: nameDescData?.description || '',
         icon,
-        illustration
+        illustration,
+        // Nuevos campos
+        stack_amount: itemData.stack_amount,
+        slots: itemData.slots,
+        equip_level_min: itemData.equip_level_min,
+        equip_level_max: itemData.equip_level_max,
+        refinable: itemData.refinable,
+        weapon_level: itemData.weapon_level,
+        equip_locations: itemData.equip_locations
       };
     }));
 
@@ -611,22 +652,66 @@ const Database = () => {
                             <div className="result-card-properties">
                               <div className="result-card-property">
                                 <span className="property-label">ATK/MATK</span>
-                                <span className="property-value">{`${result.atk}/${result.matk}`}</span>
+                                <span className="property-value">{`${result.atk || 'NA'}/${result.matk || 'NA'}`}</span>
                               </div>
                               <div className="result-card-property">
                                 <span className="property-label">DEF</span>
-                                <span className="property-value">{result.defence}</span>
+                                <span className="property-value">{result.defence || 'NA'}</span>
                               </div>
                               <div className="result-card-property">
                                 <span className="property-label">Precio</span>
-                                <span className="property-value">{`${result.price_buy}/${result.price_sell}`}</span>
+                                <span className="property-value">{`${result.price_buy || 'NA'}/${result.price_sell || 'NA'}`}</span>
                               </div>
                               <div className="result-card-property">
                                 <span className="property-label">Peso</span>
-                                <span className="property-value">{result.weight}</span>
+                                <span className="property-value">{result.weight || 'NA'}</span>
                               </div>
                             </div>
                           </div>
+                          {Number(result.type) === 4 && (
+                            <div className="result-card-section">
+                              <div className="result-card-properties">
+                                <div className="result-card-property">
+                                  <span className="property-label">Slots</span>
+                                  <span className="property-value">{result.slots || 0}</span>
+                                </div>
+                                <div className="result-card-property">
+                                  <span className="property-label">Nivel Equip</span>
+                                  <span className="property-value">{`${result.equip_level_min || 1}/${result.equip_level_max || 1}`}</span>
+                                </div>
+                                <div className="result-card-property">
+                                  <span className="property-label">Refinable</span>
+                                  <span className="property-value">{result.refinable ? 'Sí' : 'No'}</span>
+                                </div>
+                                <div className="result-card-property">
+                                  <span className="property-label">Nivel Arma</span>
+                                  <span className="property-value">{result.weapon_level || 1}</span>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                          {Number(result.type) === 5 && (
+                            <div className="result-card-section">
+                              <div className="result-card-properties">
+                                <div className="result-card-property">
+                                  <span className="property-label">Slots</span>
+                                  <span className="property-value">{result.slots || 0}</span>
+                                </div>
+                                <div className="result-card-property">
+                                  <span className="property-label">Nivel Equip</span>
+                                  <span className="property-value">{`${result.equip_level_min || 1}/${result.equip_level_max || 1}`}</span>
+                                </div>
+                                <div className="result-card-property">
+                                  <span className="property-label">Refinable</span>
+                                  <span className="property-value">{result.refinable ? 'Sí' : 'No'}</span>
+                                </div>
+                                <div className="result-card-property" title={result.equip_locations ? getEquipLocationsText(result.equip_locations) : ''}>
+                                  <span className="property-label">Ubicación</span>
+                                  <span className="property-value">{result.equip_locations ? getEquipLocationsText(result.equip_locations) : 'NA'}</span>
+                                </div>
+                              </div>
+                            </div>
+                          )}
                           {result.description && (
                             <div className="result-card-section">
                               <div className="result-card-description-header">Descripción:</div>

@@ -762,4 +762,41 @@
 .pagination-info {
   font-size: 0.9rem;
   color: #666;
+}
+
+.result-card-property[title] {
+  cursor: help;
+}
+
+.result-card-property[title] .property-value {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 150px;
+}
+
+.result-card-property[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  max-width: 300px;
+  word-wrap: break-word;
+  z-index: 1000;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 5px;
+  white-space: normal;
+}
+
+.stack-properties {
+  grid-template-columns: repeat(4, 1fr) !important;
+}
+
+.stack-properties .result-card-property {
+  grid-column: 1;
 } 
