@@ -1,6 +1,14 @@
 const fs = require('fs');
 const lunr = require('lunr');
 
+// DEBUG: readline for debugging
+const readline = require('readline');
+
+// notes about the item info:
+// https://github.com/ozcodex/hercules/blob/b975675e62dfa9cf7ddfd5017bfabeee68bf91ba/doc/item_db.txt#L259
+
+
+
 // Función para limpiar la descripción
 function cleanDescription(description) {
     // Eliminar códigos de color (^XXXXXX)
@@ -88,7 +96,7 @@ async function processDescriptions(descFile) {
 async function processFiles(files) {
     const names = await processNames(files.namesFile);
     const descriptions = await processDescriptions(files.descFile);
-    // Crear array de documentos para el índice
+    // Crear array de documentos solo con el id
     const documents = [];
 
     for (const [id, name] of names) {
@@ -127,18 +135,54 @@ async function processFiles(files) {
         JSON.stringify(idx)
     );
 
-    // Guardar los documentos (necesarios para mostrar resultados)
-    fs.writeFileSync(
-        `${outputPath}/documents.json`,
-        JSON.stringify(documents)
-    );
-
     console.log(`Índice de búsqueda creado en ${outputPath}/search-index.json`);
-    console.log(`Documentos guardados en ${outputPath}/documents.json`);
 }
+
+// DEBUG: funcion para realizar la busqueda
+async function searchIndex(query) {
+    const idx = lunr.Index.load(JSON.parse(fs.readFileSync('./data/search-index.json', 'utf-8')));
+    
+    // Realizar la búsqueda
+    const results = idx.search(query);
+
+    // Parsear los resultados para obtener el id y el score a dos decimales
+    const parsedResults = results.map(result => ({
+        id: result.ref,
+        score: result.score.toFixed(2)
+    }));
+
+    return parsedResults;
+}
+
+// DEBUG: Crear una interfaz de readline para la entrada del usuario
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+// DEBUG: Función para pedir input por consola
+function askQuestion(query) {
+    return new Promise(resolve => rl.question(query, resolve));
+}
+
+// DEBUG: Función para probar la búsqueda
+async function testSearch() {
+    const query = await askQuestion("Ingrese su consulta: ");
+
+    const results = await searchIndex(query);
+    console.log(`Resultados de búsqueda para "${query}":`);
+    results.forEach(result => {
+        console.log(`${result.id} - ${result.score}%`);
+    });
+    rl.close(); // Cerrar la interfaz de readline
+}
+
 
 // Ejecutar el proceso
 processFiles({
     namesFile: './data/idnum2itemdisplaynametable.txt',
     descFile: './data/idnum2itemdesctable.txt'
+}).then(() => {
+    // DEBUG: Probar la búsqueda después de que se complete el proceso
+    testSearch();
 }).catch(console.error); 
