@@ -210,6 +210,33 @@ const getEquipLocationsText = (locations: number[]): string => {
   return fullText.length > 30 ? fullText.substring(0, 27) + '...' : fullText;
 };
 
+const processColoredText = (text: string): JSX.Element[] => {
+  const parts = text.split(/(\^[0-9A-F]{6})/i);
+  let currentColor = '000000';
+  const elements: JSX.Element[] = [];
+  let key = 0;
+
+  for (let i = 0; i < parts.length; i++) {
+    const part = parts[i];
+    if (part.startsWith('^')) {
+      currentColor = part.substring(1);
+      continue;
+    }
+    if (part) {
+      elements.push(
+        <span 
+          key={key++} 
+          style={{ color: `#${currentColor}` }}
+        >
+          {part}
+        </span>
+      );
+    }
+  }
+
+  return elements;
+};
+
 const Database = () => {
   const [activeTab, setActiveTab] = useState<TabType>('items');
   const [searchTerm, setSearchTerm] = useState('');
@@ -722,9 +749,9 @@ const Database = () => {
                             <div className="result-card-section">
                               <div className="result-card-description-header">Descripción:</div>
                               <div className="result-card-description">
-                                <pre className="result-card-description-content">
-                                  {result.description}
-                                </pre>
+                                <div className="result-card-description-content">
+                                  {processColoredText(result.description)}
+                                </div>
                               </div>
                             </div>
                           )}
