@@ -19,15 +19,18 @@ interface LunrSearchResult {
 }
 
 interface SearchOptions {
-  selectedTypes: number[];
+  exactMatch: boolean;
+  searchByDescription?: boolean;
   searchByMap?: boolean;
   includeMiniBoss?: boolean;
+  selectedTypes: number[];
 }
 
 interface SearchState {
+  allMatchedIds: string[];
+  currentPage: number;
   results: SearchResult[];
-  lastVisible: any | null;
-  hasMore: boolean;
+  totalPages: number;
 }
 
 interface ImageDescriptor {
@@ -40,7 +43,7 @@ interface LocalData {
   types: { [key: string]: string[] };
   imageDescriptor: ImageDescriptor;
   searchIndex: lunr.Index | null;
-  nameDesc: any[];
+  nameDesc: { [key: string]: any };
   iconBatches: { [key: number]: { [key: string]: string } };
   illustrationBatches: { [key: number]: { [key: string]: string } };
 }
@@ -157,23 +160,26 @@ const Database = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [searchState, setSearchState] = useState<SearchState>({
+    allMatchedIds: [],
+    currentPage: 0,
     results: [],
-    lastVisible: 0,
-    hasMore: true
+    totalPages: 0
   });
   const [isOptionsVisible, setIsOptionsVisible] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [searchOptions, setSearchOptions] = useState<SearchOptions>({
-    selectedTypes: [],
+    exactMatch: false,
+    searchByDescription: false,
     searchByMap: false,
-    includeMiniBoss: true
+    includeMiniBoss: true,
+    selectedTypes: []
   });
   const [localData, setLocalData] = useState<LocalData>({
     items: {},
     types: {},
     imageDescriptor: { icons: {}, illustrations: {} },
     searchIndex: null,
-    nameDesc: [],
+    nameDesc: {},
     iconBatches: {},
     illustrationBatches: {}
   });
@@ -213,6 +219,8 @@ const Database = () => {
           iconBatches: {},
           illustrationBatches: {}
         });
+
+        handleInitialSearch(items, nameDesc, imageDescriptor);
       } catch (error) {
         console.error('Error cargando datos iniciales:', error);
       }
@@ -255,9 +263,10 @@ const Database = () => {
     return batch?.[id] || '/placeholder.png';
   };
 
-  const processResults = async (matchedIds: string[]) => {
-    const startIndex = (searchState.lastVisible as number) * RESULTS_PER_PAGE;
-    const paginatedIds = matchedIds.slice(startIndex, startIndex + RESULTS_PER_PAGE);
+  const processResults = async (ids: string[], page: number) => {
+    const startIndex = page * RESULTS_PER_PAGE;
+    const endIndex = Math.min(startIndex + RESULTS_PER_PAGE, ids.length);
+    const paginatedIds = ids.slice(startIndex, endIndex);
     
     const results = await Promise.all(paginatedIds.map(async id => {
       const [icon, illustration] = await Promise.all([
@@ -266,23 +275,13 @@ const Database = () => {
       ]);
 
       // Obtener el item base y los datos de nombre/descripción
-      const itemData = localData.items[id] || {};
+      const itemData = localData.items[id];
       const nameDescData = localData.nameDesc.find((item: any) => item.id === id);
 
       return {
         id,
-        type: itemData.type || 0,
-        subtype: itemData.subtype || 0,
-        atk: itemData.atk || 0,
-        matk: itemData.matk || 0,
-        defence: itemData.defence || 0,
-        price_buy: itemData.price_buy || 0,
-        price_sell: itemData.price_sell || 0,
-        weight: itemData.weight || 0,
-        codename1: itemData.codename1 || '',
-        codename2: itemData.codename2 || '',
-        script: itemData.script || '',
-        name: nameDescData?.name || itemData.codename1 || '',
+        ...itemData,
+        name: nameDescData?.name || '',
         description: nameDescData?.description || '',
         icon,
         illustration
@@ -292,32 +291,15 @@ const Database = () => {
     return results;
   };
 
-  const isValidItem = (id: string, items: any, nameDesc: any[], imageDescriptor: any) => {
-    const item = items[id];
-    const nameDescData = nameDesc.find((nd: any) => nd.id === id);
-    
-    return item && 
-           nameDescData && 
-           nameDescData.name && // Tiene nombre en nameDesc
-           nameDescData.description && // Tiene descripción
-           item.type !== undefined && 
-           item.codename1 && // Tiene nombre en inglés
-           imageDescriptor.icons[id]; // Tiene ícono
-  };
-
   const handleInitialSearch = async (items: any, nameDesc: any, imageDescriptor: any) => {
-    // Mostrar solo los primeros 10 items válidos
-    const initialIds = nameDesc
-      .filter((nd: any) => isValidItem(nd.id, items, nameDesc, imageDescriptor))
-      .slice(0, RESULTS_PER_PAGE)
-      .map((nd: any) => nd.id);
-
-    const results = await processResults(initialIds);
+    const initialIds = [] as string[];
+    const results = await processResults(initialIds, 0);
     
     setSearchState({
+      allMatchedIds: initialIds,
+      currentPage: 0,
       results,
-      lastVisible: 0,
-      hasMore: false // No mostrar "cargar más" en la carga inicial
+      totalPages: Math.ceil(initialIds.length / RESULTS_PER_PAGE)
     });
   };
 
@@ -329,7 +311,7 @@ const Database = () => {
 
       if (isNumericSearch) {
         const id = searchTerm.trim();
-        if (isValidItem(id, localData.items, localData.nameDesc, localData.imageDescriptor)) {
+        if (localData.items[id]) {
           matchedIds = [id];
         }
       } else if (localData.searchIndex) {
@@ -337,32 +319,29 @@ const Database = () => {
           const searchResults = localData.searchIndex.search(searchTerm) as LunrSearchResult[];
           matchedIds = searchResults
             .sort((a, b) => b.score - a.score)
-            .map(result => result.ref)
-            .filter(id => isValidItem(id, localData.items, localData.nameDesc, localData.imageDescriptor));
+            .map(result => result.ref);
         } catch (error) {
-          console.error('Error en la búsqueda con Lunr:', error);
+          console.error('Error en la búsqueda:', error);
         }
       }
     } else {
-      matchedIds = localData.nameDesc
-        .filter((nd: any) => isValidItem(nd.id, localData.items, localData.nameDesc, localData.imageDescriptor))
-        .map((nd: any) => nd.id);
+      matchedIds = Object.keys(localData.items);
     }
 
-    // Filtrar por tipos seleccionados usando la base de datos de tipos
     if (options.selectedTypes.length > 0) {
-      const selectedTypeIds = new Set(
-        options.selectedTypes.flatMap(type => localData.types[type] || [])
+      matchedIds = matchedIds.filter(id => 
+        options.selectedTypes.includes(localData.items[id].type)
       );
-      matchedIds = matchedIds.filter(id => selectedTypeIds.has(id));
     }
 
-    const results = await processResults(matchedIds);
+    const totalPages = Math.ceil(matchedIds.length / RESULTS_PER_PAGE);
+    const results = await processResults(matchedIds, 0);
 
     return {
+      allMatchedIds: matchedIds,
+      currentPage: 0,
       results,
-      lastVisible: 0,
-      hasMore: matchedIds.length > RESULTS_PER_PAGE
+      totalPages
     };
   };
 
@@ -379,20 +358,27 @@ const Database = () => {
     }
   };
 
-  const loadMore = async () => {
-    if (!searchState.hasMore) return;
-
+  const handlePageChange = async (newPage: number) => {
+    if (newPage < 0 || newPage >= searchState.totalPages) return;
+    
     try {
-      const nextPage = (searchState.lastVisible as number) + 1;
-      const currentResults = await searchItems(searchTerm, searchOptions);
-      
+      const results = await processResults(searchState.allMatchedIds, newPage);
       setSearchState(prev => ({
-        results: [...prev.results, ...currentResults.results],
-        lastVisible: nextPage,
-        hasMore: currentResults.hasMore
+        ...prev,
+        currentPage: newPage,
+        results
       }));
+
+      // Hacer scroll al inicio de la sección de resultados
+      const resultsSection = document.querySelector('.results-section');
+      if (resultsSection) {
+        resultsSection.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      }
     } catch (error) {
-      console.error('Error al cargar más resultados:', error);
+      console.error('Error al cambiar de página:', error);
     }
   };
 
@@ -477,28 +463,40 @@ const Database = () => {
                       <label>
                         <input 
                           type="checkbox" 
-                          checked={searchOptions.selectedTypes.length > 0}
-                          onChange={() => handleOptionChange('selectedTypes')}
+                          checked={searchOptions.exactMatch}
+                          onChange={() => handleOptionChange('exactMatch')}
                         /> 
-                        Filtrar por tipo
+                        Búsqueda exacta
                       </label>
                     </div>
                     {activeTab === 'items' ? (
-                      <div className="search-types">
-                        <div className="search-types-title">Filtrar por tipo:</div>
-                        <div className="search-types-grid">
-                          {Object.entries(ITEM_TYPES).map(([typeId, typeName]) => (
-                            <label key={typeId} className="type-checkbox">
-                              <input
-                                type="checkbox"
-                                checked={searchOptions.selectedTypes.includes(Number(typeId))}
-                                onChange={() => handleTypeToggle(Number(typeId))}
-                              />
-                              {typeName}
-                            </label>
-                          ))}
+                      <>
+                        <div className="search-option">
+                          <label>
+                            <input 
+                              type="checkbox" 
+                              checked={searchOptions.searchByDescription}
+                              onChange={() => handleOptionChange('searchByDescription')}
+                            /> 
+                            Incluir descripción en la búsqueda
+                          </label>
                         </div>
-                      </div>
+                        <div className="search-types">
+                          <div className="search-types-title">Filtrar por tipo:</div>
+                          <div className="search-types-grid">
+                            {Object.entries(ITEM_TYPES).map(([typeId, typeName]) => (
+                              <label key={typeId} className="type-checkbox">
+                                <input
+                                  type="checkbox"
+                                  checked={searchOptions.selectedTypes.includes(Number(typeId))}
+                                  onChange={() => handleTypeToggle(Number(typeId))}
+                                />
+                                {typeName}
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                      </>
                     ) : (
                       <>
                         <div className="search-option">
@@ -625,13 +623,38 @@ const Database = () => {
                     </div>
                   ))}
                 </div>
-                {searchState.hasMore && (
-                  <div className="load-more">
+                {searchState.totalPages > 1 && (
+                  <div className="pagination">
                     <button 
-                      onClick={loadMore} 
-                      className="load-more-button"
+                      onClick={() => handlePageChange(0)}
+                      disabled={searchState.currentPage === 0}
+                      className="pagination-button"
                     >
-                      Cargar más
+                      {'<<'}
+                    </button>
+                    <button 
+                      onClick={() => handlePageChange(searchState.currentPage - 1)}
+                      disabled={searchState.currentPage === 0}
+                      className="pagination-button"
+                    >
+                      {'<'}
+                    </button>
+                    <span className="pagination-info">
+                      Página {searchState.currentPage + 1} de {searchState.totalPages}
+                    </span>
+                    <button 
+                      onClick={() => handlePageChange(searchState.currentPage + 1)}
+                      disabled={searchState.currentPage === searchState.totalPages - 1}
+                      className="pagination-button"
+                    >
+                      {'>'}
+                    </button>
+                    <button 
+                      onClick={() => handlePageChange(searchState.totalPages - 1)}
+                      disabled={searchState.currentPage === searchState.totalPages - 1}
+                      className="pagination-button"
+                    >
+                      {'>>'}
                     </button>
                   </div>
                 )}
