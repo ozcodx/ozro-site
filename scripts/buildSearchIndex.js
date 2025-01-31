@@ -360,3 +360,79 @@ processFiles({
     iconsFolder: './data/input/icon',
     illustrationsFolder: './data/input/illustration'
 }).catch(console.error); 
+
+/* data structures:
+
+search-index.json:
+{
+    "index": {
+        "fields": ["name", "description"]
+    }
+}
+
+namedesc.json:
+{
+    "id": "1",
+    "name": "item name",
+    "description": "item description"
+}
+
+items.json:
+{
+    "id": "1",
+    "codename1": "item name",
+    "codename2": "item name",
+    "type": 1,
+    "subtypes": 1,
+    "atk": 1,
+    "matk": 1,
+    "defence": 1,
+    "price_buy": 1,
+    "price_sell": 1,
+    "weight": 1,
+    "equip_jobs": 1, // the number is the power of 2 that represents the job
+    "equip_upper": 1, // the number is the power of 2 that represents the restriction
+    "slots": 1,
+    "equip_level_min": 1,
+    "equip_locations": 1, // the number is the power of 2 that represents the location
+    "script": 1,
+    "unequip_script": 1,
+
+    "weapon_level": 1,
+    "delay": 1,
+    "range": 1,
+    "stack_amount": 1,
+    "stack_flag": 1,
+    "trade_flag": 1,
+    "trade_group": 1,
+    "no_use_flag": 1,
+    "no_use_group": 1
+}
+
+    images_descriptor.json:
+{
+    "icons": {
+        "1": 0, // the key is the id, the value is the batch number
+        "2": 0
+    },
+    "illustrations": {
+        "1": 1, // the key is the id, the value is the batch number
+        "2": 2
+    }
+}
+
+icons_batch_0.json:
+{
+    "1": "urldata", // the key is the id, the value is the urldata
+    "2": "urldata"
+}
+
+
+illustrations_batch_0.json:
+{
+    "1": "urldata", // the key is the id, the value is the urldata
+    "2": "urldata"
+}
+
+
+*/
