@@ -48,10 +48,11 @@ const ServerStatus = () => {
   useEffect(() => {
     const checkVpnStatus = async () => {
       // mocked data while solving the vpn issue
+      // vpn is online if the ping is between 100 and 400
       setStatusData(prev => ({ 
         ...prev, 
         vpn: 'Online',
-        ping: 342
+        ping: Math.floor(Math.random() * 300) + 100
       }));
     };
 
