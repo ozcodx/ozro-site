@@ -335,8 +335,6 @@ const Database = () => {
 
       // Asegurarnos de que type sea un número
       const type = Number(itemData.type);
-      console.log('Item type:', type, 'Item ID:', id);
-
       return {
         id,
         type,
@@ -379,7 +377,8 @@ const Database = () => {
 
       if (isNumericSearch) {
         const id = searchTerm.trim();
-        if (localData.items[id]) {
+        const itemType = Number(localData.items[id]?.type);
+        if (localData.items[id] && !isNaN(itemType) && ITEM_TYPES[itemType as keyof typeof ITEM_TYPES]) {
           matchedIds = [id];
         }
       } else if (localData.searchIndex) {
@@ -387,18 +386,25 @@ const Database = () => {
           const searchResults = localData.searchIndex.search(searchTerm) as LunrSearchResult[];
           matchedIds = searchResults
             .sort((a, b) => b.score - a.score)
-            .map(result => result.ref);
+            .map(result => result.ref)
+            .filter(id => {
+              const itemType = Number(localData.items[id]?.type);
+              return !isNaN(itemType) && ITEM_TYPES[itemType as keyof typeof ITEM_TYPES];
+            });
         } catch (error) {
           console.error('Error en la búsqueda:', error);
         }
       }
     } else {
-      matchedIds = Object.keys(localData.items);
+      matchedIds = Object.keys(localData.items).filter(id => {
+        const itemType = Number(localData.items[id]?.type);
+        return !isNaN(itemType) && ITEM_TYPES[itemType as keyof typeof ITEM_TYPES];
+      });
     }
 
     if (options.selectedTypes.length > 0) {
       matchedIds = matchedIds.filter(id => 
-        options.selectedTypes.includes(localData.items[id].type)
+        options.selectedTypes.includes(Number(localData.items[id].type))
       );
     }
 
