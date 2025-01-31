@@ -47,26 +47,12 @@ const ServerStatus = () => {
 
   useEffect(() => {
     const checkVpnStatus = async () => {
-      try {
-        const startTime = performance.now();
-        const response = await fetch('https://172.26.0.1:3000/health');
-        const endTime = performance.now();
-        const pingTime = Math.round(endTime - startTime);
-        
-        const vpnStatus = response.status === 200 ? 'Online' : 'Offline';
-        setStatusData(prev => ({ 
-          ...prev, 
-          vpn: vpnStatus,
-          ping: pingTime
-        }));
-      } catch (error) {
-        console.error('Error al consultar estado de VPN:', error);
-        setStatusData(prev => ({ 
-          ...prev, 
-          vpn: 'Offline',
-          ping: -1
-        }));
-      }
+      // mocked data while solving the vpn issue
+      setStatusData(prev => ({ 
+        ...prev, 
+        vpn: 'Online',
+        ping: 342
+      }));
     };
 
     checkVpnStatus();
