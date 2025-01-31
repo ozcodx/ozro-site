@@ -138,6 +138,33 @@ const AMMO_SUBTYPES = {
   9: 'Throwable items'
 } as const;
 
+const EQUIP_LOCATIONS = {
+  0 : "Lower Headgear",
+  1 : "Weapon",
+  2 : "Garment",
+  3 : "Accessory 1",
+  4 : "Armor",
+  5 : "Shield",
+  6 : "Both Hands",
+  7 : "Footgear",
+  8 : "Accessory 2",
+  9 : "Upper Headgear",
+  10 : "Middle Headgear",
+  11 : "Costume Top Headgear",
+  12 : "Costume Mid Headgear",
+  13 : "Costume Low Headgear",
+  14 : "Costume Garment/Robe",
+  15 : "Ammunition",
+  16 : "Shadow Armor",
+  17 : "Shadow Weapon",
+  18 : "Shadow Shield",
+  19 : "Shadow 2H Weapon",
+  20 : "Shadow Shoes",
+  21 : "Shadow Accessory 2",
+  22 : "Shadow Accessory 1",
+  23 : "Shadow Accessories",
+} as const;
+
 const getTypeName = (type: number): string => {
   return ITEM_TYPES[type as keyof typeof ITEM_TYPES] || `Unknown (${type})`;
 };
