@@ -441,6 +441,7 @@
 .property-label {
   color: #666;
   font-size: 0.9rem;
+  margin-right: 20px;
 }
 
 .property-value {
@@ -804,4 +805,29 @@
 
 .stack-properties .result-card-property {
   grid-column: 1;
+}
+
+.result-card-jobs-header {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: #666;
+}
+
+.result-card-jobs {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+.result-card-jobs .result-card-property {
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 4px;
+}
+
+.result-card-jobs .property-value {
+  text-align: right;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: #444;
 } 

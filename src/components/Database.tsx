@@ -32,6 +32,8 @@ interface SearchResult {
   refinable?: boolean;
   weapon_level?: number;
   equip_locations?: number[];
+  equip_upper?: number[];
+  equip_jobs?: number[];
 }
 
 interface LunrSearchResult {
@@ -106,6 +108,15 @@ const JOBS = {
   30 : "Rebellion",
   31 : "Summoner"
 } as const;
+
+const UPPER_TYPES = {
+  0 : "Normal jobs",
+  1 : "Trascended jobs",
+  2 : "Baby jobs",
+  3 : "Third jobs",
+  4 : "Trascended Third jobs",
+  5 : "Baby Third jobs"
+}
 
 const ITEM_TYPES = {
   0: 'Healing item',
@@ -237,6 +248,26 @@ const processColoredText = (text: string): JSX.Element[] => {
   return elements;
 };
 
+const getUpperTypesText = (upperTypes: number[]): string => {
+  const allTypes = [0, 1, 2, 3, 4, 5];
+  const missingTypes = allTypes.filter(type => !upperTypes.includes(type));
+  const presentTypes = allTypes.filter(type => upperTypes.includes(type));
+  
+  if (missingTypes.length === 0) {
+    return 'Todos';
+  }
+  
+  if (missingTypes.length > 2 || missingTypes.includes(0)) {
+    // eliminar baby classes (5,2)
+    const presentTypesWithoutBaby = presentTypes.filter(type => type !== 5 && type !== 2);
+    const presentNames = presentTypesWithoutBaby.map(type => UPPER_TYPES[type as keyof typeof UPPER_TYPES]);
+    return `Únicamente ${presentNames.join(', ')}`;
+  }
+  
+  const missingNames = missingTypes.map(type => UPPER_TYPES[type as keyof typeof UPPER_TYPES]);
+  return `Todos excepto ${missingNames.join(', ')}`;
+};
+
 const Database = () => {
   const [activeTab, setActiveTab] = useState<TabType>('items');
   const [searchTerm, setSearchTerm] = useState('');
@@ -302,7 +333,7 @@ const Database = () => {
           illustrationBatches: {}
         });
 
-        handleInitialSearch(items, nameDesc, imageDescriptor);
+        handleInitialSearch();
       } catch (error) {
         console.error('Error cargando datos iniciales:', error);
       }
@@ -340,6 +371,7 @@ const Database = () => {
     }
 
     const batchNumber = descriptor[id];
+    console.log(id, batchNumber);
     const batch = await loadImageBatch(batchNumber, type);
     
     return batch?.[id] || '/placeholder.png';
@@ -377,14 +409,16 @@ const Database = () => {
         equip_level_max: itemData.equip_level_max,
         refinable: itemData.refinable,
         weapon_level: itemData.weapon_level,
-        equip_locations: itemData.equip_locations
+        equip_locations: itemData.equip_locations,
+        equip_upper: itemData.equip_upper,
+        equip_jobs: itemData.equip_jobs
       };
     }));
 
     return results;
   };
 
-  const handleInitialSearch = async (items: any, nameDesc: any, imageDescriptor: any) => {
+  const handleInitialSearch = async () => {
     const initialIds = [] as string[];
     const results = await processResults(initialIds, 0);
     
@@ -741,6 +775,26 @@ const Database = () => {
                                 <div className="result-card-property" title={result.equip_locations ? getEquipLocationsText(result.equip_locations) : ''}>
                                   <span className="property-label">Ubicación</span>
                                   <span className="property-value">{result.equip_locations ? getEquipLocationsText(result.equip_locations) : 'NA'}</span>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                          {(Number(result.type) === 4 || Number(result.type) === 5) && (
+                            <div className="result-card-section">
+                              <div className="result-card-jobs">
+                                <div className="result-card-property">
+                                  <span className="property-label">Jobs</span>
+                                  <span className="property-value">
+                                    {result.equip_jobs && result.equip_jobs.length > 0 
+                                      ? result.equip_jobs.map(job => getJobName(job)).join(', ')
+                                      : 'Todos'}
+                                  </span>
+                                </div>
+                                <div className="result-card-property">
+                                  <span className="property-label">Grupos</span>
+                                  <span className="property-value">
+                                    {result.equip_upper?.length ? getUpperTypesText(result.equip_upper) : 'Todos'}
+                                  </span>
                                 </div>
                               </div>
                             </div>
