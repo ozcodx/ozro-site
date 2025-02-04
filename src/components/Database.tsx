@@ -365,13 +365,12 @@ const Database = () => {
   };
 
   const getImage = async (id: string, type: 'icons' | 'illustrations'): Promise<string> => {
-    const descriptor = localData.imageDescriptor[type];
-    if (!descriptor || !descriptor[id]) {
-      return '/placeholder.png';
+    const descriptor = localData.imageDescriptor[type];    
+    if (!descriptor || descriptor[id] === undefined) {
+        return '/placeholder.png';
     }
 
     const batchNumber = descriptor[id];
-    console.log(id, batchNumber);
     const batch = await loadImageBatch(batchNumber, type);
     
     return batch?.[id] || '/placeholder.png';
