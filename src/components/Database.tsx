@@ -294,6 +294,11 @@ const Database = () => {
       matchedIds = Object.keys(activeTab === 'items' ? localData.items : localData.mobs);
     }
 
+    // Filtrar los IDs para asegurarse de que solo se incluyan los que están en localData.items
+    if (activeTab === 'items') {
+      matchedIds = matchedIds.filter(id => localData.items[id]);
+    }
+
     if (activeTab === 'items' && options.selectedTypes.length > 0) {
       matchedIds = matchedIds.filter(id => 
         options.selectedTypes.includes(Number(localData.items[id].type))
