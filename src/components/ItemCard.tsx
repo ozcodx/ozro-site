@@ -252,7 +252,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ result }) => {
               <div className="title-container">
                 <div className="title-row">
                   <h3>
-                    <span className="name-title">{result.name}</span>
+                    <span className="name-title"><a href={`/database?item=${result.id}`}>{result.name}</a></span>
                     {' '}
                     <span className="name-details">
                       [{result.codename1}/{result.codename2 || '???'}]

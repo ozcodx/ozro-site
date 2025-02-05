@@ -55,7 +55,7 @@ const MOB_MODES = {
   //11: "ANGRY",
   //12: "CHANGETARGET_MELEE",
   //13: "CHANGETARGET_CHASE",
-  14: "TARGETWEAK",
+  //14: "TARGETWEAK",
   15: "NOKNOCKBACK",
   //16: "RANDOMTARGET",
 } as const;
@@ -129,7 +129,7 @@ const MobCard: React.FC<MobCardProps> = ({ result }) => {
               <div className="title-container">
                 <div className="title-row">
                   <h3>
-                    <span className="name-title">{result.name}</span>
+                    <span className="name-title"><a href={`/database?mob=${result.id}`}>{result.name}</a></span>
                     {' '}
                     <span className="name-details">
                       [{result.name2} / {result.code_name}]

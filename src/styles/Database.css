@@ -870,7 +870,7 @@
 }
 
 .result-card-stats {
-  background: rgba(0, 0, 0, 0.02);
+  background: rgba(200, 200, 200, 0.02);
   border-radius: 4px;
   padding: 0.75rem;
   display: flex;
