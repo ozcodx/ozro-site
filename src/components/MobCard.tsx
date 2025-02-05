@@ -45,19 +45,19 @@ const MOB_MODES = {
   1: "LOOTER",
   2: "AGGRESSIVE",
   3: "ASSIST",
-  4: "CASTSENSOR_IDLE",
+  4: "CASTSENSOR",
   5: "BOSS",
   6: "PLANT",
   7: "CANATTACK",
   8: "DETECTOR",
-  9: "CASTSENSOR_CHASE",
+  //9: "CASTSENSOR_CHASE",
   10: "CHANGECHASE",
-  11: "ANGRY",
-  12: "CHANGETARGET_MELEE",
-  13: "CHANGETARGET_CHASE",
+  //11: "ANGRY",
+  //12: "CHANGETARGET_MELEE",
+  //13: "CHANGETARGET_CHASE",
   14: "TARGETWEAK",
   15: "NOKNOCKBACK",
-  16: "RANDOMTARGET",
+  //16: "RANDOMTARGET",
 } as const;
 
 const MOB_RACES = {
@@ -232,15 +232,24 @@ const MobCard: React.FC<MobCardProps> = ({ result }) => {
               </div>
             </div>
             <div className="result-card-modes">
-              <div className="modes-list">
-                {result.mode?.map(mode => (
-                  <div key={mode} className="mode-item">
-                    {MOB_MODES[mode as keyof typeof MOB_MODES]}
+              <div className="modes-grid">
+              {Object.entries(MOB_MODES)
+                .map(([modeId, modeName]) => ({
+                  id: modeId,
+                  name: modeName,
+                  isActive: result.mode?.includes(Number(modeId))
+                }))
+                .sort((a, b) => (b.isActive ? 1 : 0) - (a.isActive ? 1 : 0))
+                .map(({ id, name, isActive }) => (
+                  <div key={id} className={`mode-item ${isActive ? 'mode-item-active' : ''}`}>
+                    <span>{name} :</span><strong> {isActive ? 'SI' : 'NO'}</strong>
                   </div>
                 ))}
               </div>
             </div>
           </div>
+
+
 
           {result.drop && result.drop.filter(d => d.per > 0).length > 0 && (
             <div className="result-card-section">

@@ -914,13 +914,16 @@
   overflow-y: auto;
 }
 
-.modes-list {
-  display: flex;
-  flex-direction: column;
+.modes-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 0.5rem;
 }
 
 .mode-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   padding: 0.25rem 0.5rem;
   background: rgba(255, 255, 255, 0.5);
   border-radius: 4px;
@@ -929,6 +932,10 @@
   height: 28px; /* Misma altura que los stats */
   display: flex;
   align-items: center;
+}
+
+.mode-item-active {
+  background: rgba(21, 179, 21, 0.1);
 }
 
 /* Estilos para los drops */
