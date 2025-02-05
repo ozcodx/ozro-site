@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import Header from './Header';
 import Footer from './Footer';
 import ItemCard, { SearchResult, ITEM_TYPES } from './ItemCard';
-import MobCard, { MobResult, MOB_SIZE } from './MobCard';
+import MobCard, { MobResult, MOB_SIZE, MOB_ELEMENTS, MOB_RACES } from './MobCard';
 import '../styles/Database.css';
 // @ts-ignore
 import lunr from 'lunr';
@@ -16,11 +16,13 @@ interface LunrSearchResult {
 }
 
 interface SearchOptions {
-  exactMatch: boolean;
-  searchByDescription?: boolean;
-  searchByMap?: boolean;
-  includeMiniBoss?: boolean;
   selectedTypes: number[];
+  selectedElements: number[];
+  selectedRaces: number[];
+  selectedSizes: number[];
+  showBoss: boolean;
+  showNormal: boolean;
+  showMvp: boolean;
 }
 
 interface SearchState {
@@ -68,11 +70,13 @@ const Database = () => {
   const [isOptionsVisible, setIsOptionsVisible] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [searchOptions, setSearchOptions] = useState<SearchOptions>({
-    exactMatch: false,
-    searchByDescription: false,
-    searchByMap: false,
-    includeMiniBoss: true,
-    selectedTypes: []
+    selectedTypes: [],
+    selectedElements: [],
+    selectedRaces: [],
+    selectedSizes: [],
+    showBoss: true,
+    showNormal: true,
+    showMvp: true
   });
   const [localData, setLocalData] = useState<LocalData>({
     items: {},
@@ -295,11 +299,44 @@ const Database = () => {
       matchedIds = matchedIds.filter(id => 
         options.selectedTypes.includes(Number(localData.items[id].type))
       );
-    } else if (activeTab === 'mobs' && !options.includeMiniBoss) {
+    } else if (activeTab === 'mobs') {
+      const mobs = localData.mobs;
+      
+      // Filtrar por tipo de monstruo (normal/boss/mvp)
       matchedIds = matchedIds.filter(id => {
-        const mob = localData.mobs[id];
-        return !mob.mode || !mob.mode.includes(5); // 5 es el modo BOSS
+        const isBoss = mobs[id].mode?.includes(5);
+        const isMvp = mobs[id].mexp > 0;
+        const isNormal = !isBoss;
+
+        return (
+          (options.showNormal && isNormal) ||
+          (options.showBoss && isBoss && !isMvp) ||
+          (options.showMvp && isMvp)
+        );
       });
+
+      // Filtrar por elemento
+      if (options.selectedElements.length > 0) {
+        matchedIds = matchedIds.filter(id => {
+          const elementLevel = Math.floor(mobs[id].element / 20) + 1;
+          const elementId = mobs[id].element - ((elementLevel - 1) * 20);
+          return options.selectedElements.includes(elementId);
+        });
+      }
+
+      // Filtrar por raza
+      if (options.selectedRaces.length > 0) {
+        matchedIds = matchedIds.filter(id => 
+          options.selectedRaces.includes(mobs[id].race)
+        );
+      }
+
+      // Filtrar por tamaño
+      if (options.selectedSizes.length > 0) {
+        matchedIds = matchedIds.filter(id => 
+          options.selectedSizes.includes(mobs[id].size)
+        );
+      }
     }
 
     const totalPages = Math.ceil(matchedIds.length / RESULTS_PER_PAGE);
@@ -366,13 +403,6 @@ const Database = () => {
     }, 300);
   };
 
-  const handleOptionChange = (option: keyof SearchOptions) => {
-    setSearchOptions(prev => ({
-      ...prev,
-      [option]: !prev[option]
-    }));
-  };
-
   const handleTypeToggle = (type: number) => {
     setSearchOptions(prev => ({
       ...prev,
@@ -382,15 +412,44 @@ const Database = () => {
     }));
   };
 
+  const handleElementToggle = (element: number) => {
+    setSearchOptions(prev => ({
+      ...prev,
+      selectedElements: prev.selectedElements.includes(element)
+        ? prev.selectedElements.filter(e => e !== element)
+        : [...prev.selectedElements, element]
+    }));
+  };
+
+  const handleRaceToggle = (race: number) => {
+    setSearchOptions(prev => ({
+      ...prev,
+      selectedRaces: prev.selectedRaces.includes(race)
+        ? prev.selectedRaces.filter(r => r !== race)
+        : [...prev.selectedRaces, race]
+    }));
+  };
+
+  const handleSizeToggle = (size: number) => {
+    setSearchOptions(prev => ({
+      ...prev,
+      selectedSizes: prev.selectedSizes.includes(size)
+        ? prev.selectedSizes.filter(s => s !== size)
+        : [...prev.selectedSizes, size]
+    }));
+  };
+
   const handleTabChange = (tab: TabType) => {
     setActiveTab(tab);
     setSearchTerm('');
     setSearchOptions({
-      exactMatch: false,
-      searchByDescription: false,
-      searchByMap: false,
-      includeMiniBoss: true,
-      selectedTypes: []
+      selectedTypes: [],
+      selectedElements: [],
+      selectedRaces: [],
+      selectedSizes: [],
+      showBoss: true,
+      showNormal: true,
+      showMvp: true
     });
     handleInitialSearch();
   };
@@ -439,28 +498,8 @@ const Database = () => {
                 </button>
                 {isOptionsVisible && (
                   <div className={`search-options-panel ${isClosing ? 'closing' : ''}`}>
-                    <div className="search-option">
-                      <label>
-                        <input 
-                          type="checkbox" 
-                          checked={searchOptions.exactMatch}
-                          onChange={() => handleOptionChange('exactMatch')}
-                        /> 
-                        Búsqueda exacta
-                      </label>
-                    </div>
                     {activeTab === 'items' ? (
                       <>
-                        <div className="search-option">
-                          <label>
-                            <input 
-                              type="checkbox" 
-                              checked={searchOptions.searchByDescription}
-                              onChange={() => handleOptionChange('searchByDescription')}
-                            /> 
-                            Incluir descripción en la búsqueda
-                          </label>
-                        </div>
                         <div className="search-types">
                           <div className="search-types-title">Filtrar por tipo:</div>
                           <div className="search-types-grid">
@@ -479,25 +518,79 @@ const Database = () => {
                       </>
                     ) : (
                       <>
-                        <div className="search-option">
-                          <label>
-                            <input 
-                              type="checkbox" 
-                              checked={searchOptions.searchByMap}
-                              onChange={() => handleOptionChange('searchByMap')}
-                            /> 
-                            Buscar por mapa
-                          </label>
+                        <div className="search-types">
+                          <div className="search-types-title">Tipo de monstruo:</div>
+                          <div className="search-types-grid">
+                            <label className="type-checkbox">
+                              <input
+                                type="checkbox"
+                                checked={searchOptions.showNormal}
+                                onChange={() => setSearchOptions(prev => ({...prev, showNormal: !prev.showNormal}))}
+                              />
+                              Monstruos Normales
+                            </label>
+                            <label className="type-checkbox">
+                              <input
+                                type="checkbox"
+                                checked={searchOptions.showBoss}
+                                onChange={() => setSearchOptions(prev => ({...prev, showBoss: !prev.showBoss}))}
+                              />
+                              Monstruos Boss
+                            </label>
+                            <label className="type-checkbox">
+                              <input
+                                type="checkbox"
+                                checked={searchOptions.showMvp}
+                                onChange={() => setSearchOptions(prev => ({...prev, showMvp: !prev.showMvp}))}
+                              />
+                              Monstruos MVP
+                            </label>
+                          </div>
                         </div>
-                        <div className="search-option">
-                          <label>
-                            <input 
-                              type="checkbox" 
-                              checked={searchOptions.includeMiniBoss}
-                              onChange={() => handleOptionChange('includeMiniBoss')}
-                            /> 
-                            Incluir mini-jefes
-                          </label>
+                        <div className="search-types">
+                          <div className="search-types-title">Filtrar por elemento:</div>
+                          <div className="search-types-grid">
+                            {Object.entries(MOB_ELEMENTS).map(([elementId, elementName]) => (
+                              <label key={elementId} className="type-checkbox">
+                                <input
+                                  type="checkbox"
+                                  checked={searchOptions.selectedElements.includes(Number(elementId))}
+                                  onChange={() => handleElementToggle(Number(elementId))}
+                                />
+                                {elementName}
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                        <div className="search-types">
+                          <div className="search-types-title">Filtrar por raza:</div>
+                          <div className="search-types-grid">
+                            {Object.entries(MOB_RACES).map(([raceId, raceName]) => (
+                              <label key={raceId} className="type-checkbox">
+                                <input
+                                  type="checkbox"
+                                  checked={searchOptions.selectedRaces.includes(Number(raceId))}
+                                  onChange={() => handleRaceToggle(Number(raceId))}
+                                />
+                                {raceName}
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                        <div className="search-types">
+                          <div className="search-types-title">Filtrar por tamaño:</div>
+                          <div className="search-types-grid">
+                            {Object.entries(MOB_SIZE).map(([sizeId, sizeName]) => (
+                              <label key={sizeId} className="type-checkbox">
+                                <input
+                                  type="checkbox"
+                                  checked={searchOptions.selectedSizes.includes(Number(sizeId))}
+                                  onChange={() => handleSizeToggle(Number(sizeId))}
+                                />
+                                {sizeName}
+                              </label>
+                            ))}
+                          </div>
                         </div>
                       </>
                     )}
@@ -559,7 +652,7 @@ const Database = () => {
               <div className="no-results">
                 {searchTerm || searchOptions.selectedTypes.length > 0 
                   ? 'No se encontraron resultados' 
-                  : 'Ingresa un término para buscar o selecciona tipos de objetos'}
+                  : 'Ingresa un término para buscar o selecciona un filtro'}
               </div>
             )}
           </div>

@@ -1,5 +1,3 @@
-import { ReactElement } from 'react';
-
 interface MobDrop {
   id: number;
   type: 'normal' | 'card' | 'mvp';
@@ -36,10 +34,11 @@ interface MobResult {
 }
 
 const MOB_SIZE = {
-  0: "Small",
-  1: "Medium",
-  2: "Large"
+  0: "Pequeño",
+  1: "Mediano",
+  2: "Grande"
 } as const;
+
 
 const MOB_MODES = {
   0: "CANMOVE",
@@ -91,10 +90,6 @@ const getSizeName = (size: number): string => {
   return MOB_SIZE[size as keyof typeof MOB_SIZE] || `Unknown (${size})`;
 };
 
-const getModeNames = (modes: number[]): string[] => {
-  return modes.map(mode => MOB_MODES[mode as keyof typeof MOB_MODES] || `Unknown (${mode})`);
-};
-
 const getRaceName = (race: number): string => {
   return MOB_RACES[race as keyof typeof MOB_RACES] || `Unknown (${race})`;
 };
@@ -114,7 +109,12 @@ const MobCard: React.FC<MobCardProps> = ({ result }) => {
     <div className="result-card">
       <div className="result-card-content">
         <div className="result-card-image">
-          <img 
+            {result.mexp > 0 && (
+            <div className="mvp-icon">
+              <img src="/icons/mvp.gif" alt="MVP" />
+            </div>
+            )}
+            <img 
             src={result.sprite || '/placeholder.png'}
             alt={result.name}
             onError={(e) => {
@@ -291,4 +291,4 @@ const MobCard: React.FC<MobCardProps> = ({ result }) => {
 
 export default MobCard;
 export type { MobResult };
-export { MOB_SIZE, MOB_MODES }; 
+export { MOB_SIZE, MOB_MODES, MOB_ELEMENTS, MOB_RACES }; 
