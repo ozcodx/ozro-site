@@ -1,5 +1,12 @@
+a {
+  color: #333;
+  text-decoration: none;
+  cursor: pointer;
+}
+
 .database {
   min-height: 100vh;
+
   display: flex;
   flex-direction: column;
 }
