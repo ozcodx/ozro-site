@@ -297,7 +297,7 @@
 
 .results-section {
   min-height: 400px;
-  max-height: calc(100vh - 400px);
+  /*max-height: calc(100vh - 400px);*/
   overflow-y: auto;
   overflow-x: hidden;
   padding-right: 0.75rem;
@@ -887,6 +887,7 @@
 
 .stat-item {
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
   align-items: center;
   padding: 0.25rem 0.5rem;
