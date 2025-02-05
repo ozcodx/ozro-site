@@ -242,6 +242,7 @@ async function processMobDb(dbFile) {
         for (const mob of db) {
             const id = mob.ID.toString();
             const mobData = {
+                id: id,
                 name: mob.iName,
                 name2: mob.kName,
                 sprite: mob.Sprite,
@@ -266,6 +267,8 @@ async function processMobDb(dbFile) {
                 element: mob.Element,
                 size: mob.Scale,
                 race: mob.Race,
+
+                mode: cleanCondensed(mob.Mode),
             }
             // add the mob drop
             const dropTable = [];
@@ -288,11 +291,12 @@ async function processMobDb(dbFile) {
             }
             // check the mvp drop
             for (let i = 1; i <= 3; i++) {
-                if (mob["MVPNid" + i] !== 0 && mob["MVPNper" + i] !== 0) {
+                if (mob["MVP" + i + "id"] !== 0 && mob["MVP" + i + "per"] !== 0) {
                     dropTable.push({
                         type: "mvp",
-                        id: mob["MVPNid" + i],
-                        per: mob["MVPNper" + i]
+                        id: mob["MVP" + i + "id"],
+                        per: mob["MVP" + i + "per"]
+
                     });
                 }
             }
@@ -650,7 +654,7 @@ processFiles({
     item_illustrationsFolder: './data/input/illustration',
     // mobs files
     mob_dbFile: './data/input/mob_db.json',
-    mob_spritesFolder: './data/input/sprites'
+    //mob_spritesFolder: './data/input/sprites'
 }).catch(console.error); 
 
 

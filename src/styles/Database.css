@@ -840,14 +840,117 @@
   margin-top: 4px;
 }
 
+.result-card-stats {
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 4px;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  height: 124px; /* (28px altura * 3 filas) + (8px gap * 2) + (12px padding * 2) */
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 4px;
+  height: 28px;
+}
+
+.stat-label {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.stat-value {
+  color: #333;
+  font-weight: 500;
+}
+
 .result-card-modes {
-  width: 100%;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 4px;
+  padding: 0.75rem;
+  height: 124px; /* Misma altura que stats: (28px altura * 3 filas) + (8px gap * 2) + (12px padding * 2) */
+  overflow-y: auto;
 }
 
 .modes-list {
-  font-size: 0.9em;
-  line-height: 1.4;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mode-item {
+  padding: 0.25rem 0.5rem;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 4px;
+  font-size: 0.9rem;
+  color: #333;
+  height: 28px; /* Misma altura que los stats */
+  display: flex;
+  align-items: center;
+}
+
+/* Estilos para los drops */
+.result-card-drop {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 4px;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  height: 36px;
+}
+
+.result-card-drop.card {
+  background: rgba(25, 113, 194, 0.05);
+  border: 1px solid rgba(25, 113, 194, 0.1);
+}
+
+.result-card-drop.mvp {
+  background: rgba(201, 42, 42, 0.05);
+  border: 1px solid rgba(201, 42, 42, 0.1);
+}
+
+.drop-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.drop-name {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #333;
+  font-weight: 500;
+}
+
+.drop-chance {
+  flex-shrink: 0;
   color: #666;
+  font-size: 0.85rem;
+  min-width: 45px;
+  text-align: right;
+}
+
+.normal-drops {
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.5rem;
 }
 
 /* Estilos para la sección de drops */
@@ -867,16 +970,6 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 0.5rem;
-}
-
-.result-card-drop {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem;
-  background: rgba(0, 0, 0, 0.02);
-  border-radius: 4px;
-  font-size: 0.9rem;
 }
 
 .drop-type {
@@ -907,8 +1000,36 @@
   font-size: 0.85rem;
 }
 
-.drop-chance {
-  margin-left: auto;
+/* Estilos para el nivel del monstruo */
+.mob-level {
+  font-size: 1rem;
+  font-weight: bold;
   color: #333;
-  font-weight: 500;
+  margin-left: 1rem;
+}
+
+/* Grid de stats y modos */
+.stats-modes-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+/* Grids de drops */
+.mvp-drops {
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 0.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .stats-modes-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .normal-drops,
+  .mvp-drops {
+    grid-template-columns: 1fr;
+  }
 } 

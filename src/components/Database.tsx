@@ -225,10 +225,26 @@ const Database = () => {
         const sprite = await getImage(id, 'sprites');
         const mobData = localData.mobs[id] || {};
 
+        // Procesar los drops para incluir información del item
+        const processedDrops = await Promise.all((mobData.drop || []).map(async (drop: any) => {
+          const dropId = String(drop.id); // Convertir a string de forma segura
+          const itemData = localData.items[dropId] || {};
+          const nameDescData = localData.nameDesc.find((item: any) => item.id === dropId);
+          const icon = await getImage(dropId, 'icons');
+
+          return {
+            ...drop,
+            itemName: nameDescData?.name || `Item #${dropId}`, // Fallback si no hay nombre
+            itemIcon: icon
+          };
+        }));
+
         return {
           id,
+          code_name: mobData.sprite,
           ...mobData,
-          sprite
+          sprite,
+          drop: processedDrops
         };
       }));
 
@@ -366,6 +382,19 @@ const Database = () => {
     }));
   };
 
+  const handleTabChange = (tab: TabType) => {
+    setActiveTab(tab);
+    setSearchTerm('');
+    setSearchOptions({
+      exactMatch: false,
+      searchByDescription: false,
+      searchByMap: false,
+      includeMiniBoss: true,
+      selectedTypes: []
+    });
+    handleInitialSearch();
+  };
+
   return (
     <div className="database">
       <Header />
@@ -373,13 +402,13 @@ const Database = () => {
         <div className="database-tabs">
           <button 
             className={`tab-button ${activeTab === 'items' ? 'active' : ''}`}
-            onClick={() => setActiveTab('items')}
+            onClick={() => handleTabChange('items')}
           >
             Base de Datos de Objetos
           </button>
           <button 
             className={`tab-button ${activeTab === 'mobs' ? 'active' : ''}`}
-            onClick={() => setActiveTab('mobs')}
+            onClick={() => handleTabChange('mobs')}
           >
             Base de Datos de Monstruos
           </button>

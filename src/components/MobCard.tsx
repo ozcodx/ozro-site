@@ -4,6 +4,8 @@ interface MobDrop {
   id: number;
   type: 'normal' | 'card' | 'mvp';
   per: number;
+  itemName: string;
+  itemIcon: string;
 }
 
 interface MobResult {
@@ -29,6 +31,7 @@ interface MobResult {
   size: number;
   race: number;
   drop: MobDrop[];
+  mode?: number[];
 }
 
 const MOB_SIZE = {
@@ -60,7 +63,7 @@ const MOB_MODES = {
 const MOB_RACES = {
   0: "Amorfo",
   1: "No-Muerto",
-  2: "Bruto",
+  2: "Bestia",
   3: "Planta",
   4: "Insecto",
   5: "Pez",
@@ -78,7 +81,7 @@ const MOB_ELEMENTS = {
   4: "Viento",
   5: "Veneno",
   6: "Sagrado",
-  7: "Sombra",
+  7: "Oscuridad",
   8: "Fantasma",
   9: "No-Muerto"
 } as const;
@@ -96,7 +99,9 @@ const getRaceName = (race: number): string => {
 };
 
 const getElementName = (element: number): string => {
-  return MOB_ELEMENTS[element as keyof typeof MOB_ELEMENTS] || `Unknown (${element})`;
+  const level = Math.floor(element / 20) + 1;
+  const elementId = element - ((level - 1) * 20);
+  return `${MOB_ELEMENTS[elementId as keyof typeof MOB_ELEMENTS]} ${level}` || `Unknown (${element})`;
 };
 
 interface MobCardProps {
@@ -126,18 +131,20 @@ const MobCard: React.FC<MobCardProps> = ({ result }) => {
                     <span className="name-title">{result.name}</span>
                     {' '}
                     <span className="name-details">
-                      [{result.name2}]
+                      [{result.name2} / {result.code_name}]
                     </span>
                     {' '}
                     <span className="result-card-id">(#{result.id})</span>
                   </h3>
-                  <span className="mob-type">
-                    Nivel {result.lvl} - {getSizeName(result.size)}
+                  <span className="mob-level">
+                    Nivel {result.lvl}
                   </span>
                 </div>
               </div>
             </div>
           </div>
+
+          {/* Primera fila: HP, ATK, DEF/MDEF */}
           <div className="result-card-section">
             <div className="result-card-properties">
               <div className="result-card-property">
@@ -145,12 +152,8 @@ const MobCard: React.FC<MobCardProps> = ({ result }) => {
                 <span className="property-value">{result.hp || 'NA'}</span>
               </div>
               <div className="result-card-property">
-                <span className="property-label">Base/Job EXP</span>
-                <span className="property-value">{`${result.exp || 'NA'}/${result.jexp || 'NA'}`}</span>
-              </div>
-              <div className="result-card-property">
-                <span className="property-label">MVP EXP</span>
-                <span className="property-value">{result.mexp || 'NA'}</span>
+                <span className="property-label">ATK</span>
+                <span className="property-value">{result.atk || 'NA'}</span>
               </div>
               <div className="result-card-property">
                 <span className="property-label">DEF/MDEF</span>
@@ -158,22 +161,28 @@ const MobCard: React.FC<MobCardProps> = ({ result }) => {
               </div>
             </div>
           </div>
+
+          {/* Nueva fila: Base EXP, Job EXP, MVP EXP */}
           <div className="result-card-section">
             <div className="result-card-properties">
               <div className="result-card-property">
-                <span className="property-label">STR/AGI/VIT</span>
-                <span className="property-value">{`${result.str || 'NA'}/${result.agi || 'NA'}/${result.vit || 'NA'}`}</span>
+                <span className="property-label">Base EXP</span>
+                <span className="property-value">{result.exp?.toLocaleString() || 'NA'}</span>
               </div>
               <div className="result-card-property">
-                <span className="property-label">INT/DEX/LUK</span>
-                <span className="property-value">{`${result.int || 'NA'}/${result.dex || 'NA'}/${result.luk || 'NA'}`}</span>
+                <span className="property-label">Job EXP</span>
+                <span className="property-value">{result.jexp?.toLocaleString() || 'NA'}</span>
               </div>
-              <div className="result-card-property">
-                <span className="property-label">ATK</span>
-                <span className="property-value">{result.atk || 'NA'}</span>
-              </div>
+              {result.mexp > 0 && (
+                <div className="result-card-property">
+                  <span className="property-label">MVP EXP</span>
+                  <span className="property-value">{result.mexp.toLocaleString()}</span>
+                </div>
+              )}
             </div>
           </div>
+
+          {/* Segunda fila: Raza, Elemento, Tamaño */}
           <div className="result-card-section">
             <div className="result-card-properties">
               <div className="result-card-property">
@@ -184,20 +193,91 @@ const MobCard: React.FC<MobCardProps> = ({ result }) => {
                 <span className="property-label">Elemento</span>
                 <span className="property-value">{getElementName(result.element)}</span>
               </div>
+              <div className="result-card-property">
+                <span className="property-label">Tamaño</span>
+                <span className="property-value">{getSizeName(result.size)}</span>
+              </div>
             </div>
           </div>
-          {result.drop && result.drop.length > 0 && (
+
+          {/* Tercera fila: Stats y Modos */}
+          <div className="result-card-section stats-modes-grid">
+            <div className="result-card-stats">
+              <div className="stats-grid">
+                <div className="stat-item">
+                  <span className="stat-label">STR</span>
+                  <span className="stat-value">{result.str || 'NA'}</span>
+                </div>
+                <div className="stat-item">
+                  <span className="stat-label">AGI</span>
+                  <span className="stat-value">{result.agi || 'NA'}</span>
+                </div>
+                <div className="stat-item">
+                  <span className="stat-label">VIT</span>
+                  <span className="stat-value">{result.vit || 'NA'}</span>
+                </div>
+                <div className="stat-item">
+                  <span className="stat-label">INT</span>
+                  <span className="stat-value">{result.int || 'NA'}</span>
+                </div>
+                <div className="stat-item">
+                  <span className="stat-label">DEX</span>
+                  <span className="stat-value">{result.dex || 'NA'}</span>
+                </div>
+                <div className="stat-item">
+                  <span className="stat-label">LUK</span>
+                  <span className="stat-value">{result.luk || 'NA'}</span>
+                </div>
+              </div>
+            </div>
+            <div className="result-card-modes">
+              <div className="modes-list">
+                {result.mode?.map(mode => (
+                  <div key={mode} className="mode-item">
+                    {MOB_MODES[mode as keyof typeof MOB_MODES]}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {result.drop && result.drop.filter(d => d.per > 0).length > 0 && (
             <div className="result-card-section">
               <div className="result-card-drops">
-                <div className="result-card-drops-header">Drops:</div>
-                <div className="result-card-drops-grid">
-                  {result.drop.map((drop, index) => (
-                    <div key={`${drop.id}-${index}`} className="result-card-drop">
-                      <span className={`drop-type ${drop.type}`}>{drop.type}</span>
-                      <span className="drop-id">#{drop.id}</span>
-                      <span className="drop-chance">{drop.per}%</span>
-                    </div>
-                  ))}
+                <div className="result-card-drops-grid normal-drops">
+                  {result.drop
+                    .filter(d => d.per > 0)
+                    .map((drop, index) => {
+                      // Convertir el nombre a Title Case y truncar si es necesario
+                      const formattedName = drop.itemName
+                        .split(' ')
+                        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                        .join(' ');
+                      
+                      const truncatedName = formattedName.length > 20 
+                        ? formattedName.substring(0, 20) + '...'
+                        : formattedName;
+                      
+                      return (
+                        <div key={`${drop.id}-${index}`} className={`result-card-drop ${drop.type}`}>
+                          <img 
+                            src={drop.itemIcon || '/placeholder.png'}
+                            alt={formattedName}
+                            className="drop-icon"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.src = '/placeholder.png';
+                            }}
+                          />
+                          <span className="drop-name">
+                            {truncatedName}{drop.type === 'mvp' ? ' (MVP)' : ''}
+                          </span>
+                          <span className="drop-chance">
+                            {(Math.min(drop.per, 1000) / 10).toFixed(1)}%
+                          </span>
+                        </div>
+                      );
+                    })}
                 </div>
               </div>
             </div>
