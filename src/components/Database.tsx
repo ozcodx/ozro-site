@@ -334,7 +334,7 @@ const Database = () => {
       // Filtrar por tamaño
       if (options.selectedSizes.length > 0) {
         matchedIds = matchedIds.filter(id => 
-          options.selectedSizes.includes(mobs[id].size)
+          options.selectedSizes.includes(Number(mobs[id].size))
         );
       }
     }
