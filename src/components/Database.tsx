@@ -268,7 +268,6 @@ const Database = () => {
     
     //InitialSearchDone marks if the search by params has been done
     //this should be done only once
-    console.log(initialSearchDone);
     if (!initialSearchDone){
       if (mobId) {
         setActiveTab('mobs');
@@ -295,7 +294,6 @@ const Database = () => {
     useEffect(() => {
       const performInitialSearch = async () => {
         if (initialSearchDone && searchTerm) {
-          console.log('Realizando búsqueda con término:', searchTerm);
           const searchResult = await searchItems(searchTerm, searchOptions);
           setSearchState(searchResult);
         }
