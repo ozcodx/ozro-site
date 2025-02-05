@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
 import ItemCard, { SearchResult, ITEM_TYPES } from './ItemCard';
@@ -92,6 +93,8 @@ const Database = () => {
     mobSpriteBatches: {}
   });
   const searchOptionsRef = useRef<HTMLDivElement>(null);
+  const location = useLocation();
+  const [initialSearchDone, setInitialSearchDone] = useState(false);
 
   useEffect(() => {
     const loadInitialData = async () => {
@@ -150,14 +153,14 @@ const Database = () => {
           mobSpriteBatches: {}
         });
 
-        handleInitialSearch();
+        await handleInitialSearch();
       } catch (error) {
         console.error('Error cargando datos iniciales:', error);
       }
     };
 
     loadInitialData();
-  }, []);
+  }, [location]);
 
   const loadImageBatch = async (batchNumber: number, type: 'icons' | 'illustrations' | 'sprites') => {
     const batchType = type === 'sprites' ? 'mobSpriteBatches' : type === 'icons' ? 'iconBatches' : 'illustrationBatches';
@@ -257,15 +260,49 @@ const Database = () => {
 
   const handleInitialSearch = async () => {
     const initialIds = [] as string[];
-    const results = await processResults(initialIds, 0);
+
+    //load params
+    const searchParams = new URLSearchParams(location.search);
+    const mobId = searchParams.get('mob');
+    const itemId = searchParams.get('item');
     
-    setSearchState({
-      allMatchedIds: initialIds,
-      currentPage: 0,
-      results,
-      totalPages: Math.ceil(initialIds.length / RESULTS_PER_PAGE)
-    });
-  };
+    //InitialSearchDone marks if the search by params has been done
+    //this should be done only once
+    console.log(initialSearchDone);
+    if (!initialSearchDone){
+      if (mobId) {
+        setActiveTab('mobs');
+        setSearchTerm(mobId);
+      } else if (itemId) {
+        setActiveTab('items');
+        setSearchTerm(itemId);
+      }
+      setInitialSearchDone(true);
+      }else{
+        setSearchTerm('');
+        // when tab changes, we need to clear the view
+        const results = await processResults(initialIds, 0);
+        
+        setSearchState({
+            allMatchedIds: initialIds,
+            currentPage: 0,
+            results,
+            totalPages: Math.ceil(initialIds.length / RESULTS_PER_PAGE)
+        });
+      }
+    };
+
+    useEffect(() => {
+      const performInitialSearch = async () => {
+        if (initialSearchDone && searchTerm) {
+          console.log('Realizando búsqueda con término:', searchTerm);
+          const searchResult = await searchItems(searchTerm, searchOptions);
+          setSearchState(searchResult);
+        }
+      };
+  
+      performInitialSearch();
+    }, [initialSearchDone]); // Dependencias en searchTerm y initialSearchDone
 
   const searchItems = async (searchTerm: string, options: SearchOptions) => {
     let matchedIds: string[] = [];
