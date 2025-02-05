@@ -232,7 +232,6 @@ const Database = () => {
         // Procesar los drops para incluir información del item
         const processedDrops = await Promise.all((mobData.drop || []).map(async (drop: any) => {
           const dropId = String(drop.id); // Convertir a string de forma segura
-          const itemData = localData.items[dropId] || {};
           const nameDescData = localData.nameDesc.find((item: any) => item.id === dropId);
           const icon = await getImage(dropId, 'icons');
 
