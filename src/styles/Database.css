@@ -935,7 +935,7 @@
 }
 
 .mode-item-active {
-  background: rgba(21, 179, 21, 0.1);
+  background: rgba(21, 179, 21, 0.05);
 }
 
 /* Estilos para los drops */
