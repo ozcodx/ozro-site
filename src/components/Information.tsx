@@ -18,6 +18,8 @@ const sections: InfoSection[] = [
   { id: 'exp-rates', title: 'Rates de Experiencia', icon: '/icons/exp.png', category: 'Información del Servidor' },
   { id: 'drop-rates', title: 'Tasa de Drop', icon: '/icons/drop.png', category: 'Información del Servidor' },
   { id: 'stats', title: 'Estadísticas', icon: '/icons/stats.png', category: 'Información del Servidor' },
+  { id: 'download', title: 'Descargas', icon: '/icons/download.png', category: 'Información del Servidor' },
+
 
   // Sistemas Personalizados
   { id: 'unique-features', title: 'Mecanicas\nÚnicas', icon: '/icons/unique.png', category: 'Sistemas Personalizados' },

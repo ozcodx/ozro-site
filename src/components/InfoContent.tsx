@@ -95,6 +95,32 @@ const contentMap: Record<string, ReactNode> = {
       </div>
     </div>
   ),
+  'download': (
+    <div className="info-content">
+      <h2>Descargas</h2>
+      <div className="content-section">
+        <p>
+          Descarga el cliente para disfrutar de la experiencia en nuestro servidor.
+          <br />
+          Recuerda que las cuentas nuevas debes solicitarlas a los administradores.
+        </p>
+        <ul>
+          <li><a href="https://drive.usercontent.google.com/download?id=1VTzGUOz4OpP__ZTZ4UkKQndinIJNkcHS&export=download" target="_blank" rel="noopener noreferrer">Descargar desde Google Drive</a></li>
+        </ul>
+        <p>
+          Para poderte conectar al servidor necesitas tener instalada la VPN de ZeroTier.
+          <br />
+          La informacion de identificador de red puedes solicitarla a los administradores.
+        </p>
+        <ul>
+          <li><a href="https://download.zerotier.com/dist/ZeroTier%20One.msi" target="_blank" rel="noopener noreferrer">Descargar ZeroTier</a></li>
+        </ul>
+        <p>
+          Si tienes alguna duda, no dudes en contactar con los administradores.
+        </p>
+      </div>
+    </div>
+  ),
   'unique-features': (
     <div className="info-content">  
       <h2>Mecanicas Únicas</h2>
