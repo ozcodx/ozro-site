@@ -948,12 +948,6 @@
   text-align: right;
 }
 
-.normal-drops {
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 0.5rem;
-}
-
-/* Estilos para la sección de drops */
 .result-card-drops {
   margin-top: 1rem;
   padding-top: 1rem;
@@ -968,7 +962,7 @@
 
 .result-card-drops-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 0.5rem;
 }
 
@@ -1022,13 +1016,35 @@
   gap: 0.5rem;
 }
 
+.normal-drops {
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+}
+
+@media (max-width: 1200px) {
+  .normal-drops {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .normal-drops {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .normal-drops {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .stats-modes-grid {
     grid-template-columns: 1fr;
   }
 
-  .normal-drops,
   .mvp-drops {
     grid-template-columns: 1fr;
   }

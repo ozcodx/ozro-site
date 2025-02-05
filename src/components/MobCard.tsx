@@ -32,6 +32,7 @@ interface MobResult {
   race: number;
   drop: MobDrop[];
   mode?: number[];
+  code_name?: string;
 }
 
 const MOB_SIZE = {
