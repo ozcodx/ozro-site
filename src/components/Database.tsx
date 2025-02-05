@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import Header from './Header';
 import Footer from './Footer';
 import ItemCard, { SearchResult, ITEM_TYPES } from './ItemCard';
+import MobCard, { MobResult, MOB_SIZE } from './MobCard';
 import '../styles/Database.css';
 // @ts-ignore
 import lunr from 'lunr';
@@ -25,7 +26,7 @@ interface SearchOptions {
 interface SearchState {
   allMatchedIds: string[];
   currentPage: number;
-  results: SearchResult[];
+  results: (SearchResult | MobResult)[];
   totalPages: number;
 }
 
@@ -34,14 +35,22 @@ interface ImageDescriptor {
   illustrations: { [key: string]: number };
 }
 
+interface MobImageDescriptor {
+  [key: string]: number;
+}
+
 interface LocalData {
   items: { [key: string]: any };
+  mobs: { [key: string]: any };
   types: { [key: string]: string[] };
   imageDescriptor: ImageDescriptor;
+  mobImageDescriptor: MobImageDescriptor;
   searchIndex: lunr.Index | null;
+  mobSearchIndex: lunr.Index | null;
   nameDesc: { [key: string]: any };
   iconBatches: { [key: number]: { [key: string]: string } };
   illustrationBatches: { [key: number]: { [key: string]: string } };
+  mobSpriteBatches: { [key: number]: { [key: string]: string } };
 }
 
 const RESULTS_PER_PAGE = 10;
@@ -67,12 +76,16 @@ const Database = () => {
   });
   const [localData, setLocalData] = useState<LocalData>({
     items: {},
+    mobs: {},
     types: {},
     imageDescriptor: { icons: {}, illustrations: {} },
+    mobImageDescriptor: {},
     searchIndex: null,
+    mobSearchIndex: null,
     nameDesc: {},
     iconBatches: {},
-    illustrationBatches: {}
+    illustrationBatches: {},
+    mobSpriteBatches: {}
   });
   const searchOptionsRef = useRef<HTMLDivElement>(null);
 
@@ -81,34 +94,56 @@ const Database = () => {
       try {
         const [
           itemsResponse,
+          mobsResponse,
           typesResponse,
           imageDescriptorResponse,
+          mobImageDescriptorResponse,
           searchIndexResponse,
+          mobSearchIndexResponse,
           nameDescResponse
         ] = await Promise.all([
           fetch('/data/items.json'),
+          fetch('/data/mobs.json'),
           fetch('/data/types.json'),
           fetch('/data/images_descriptor.json'),
+          fetch('/data/mob-images-descriptor.json'),
           fetch('/data/search-index.json'),
+          fetch('/data/mob-search-index.json'),
           fetch('/data/namedesc.json')
         ]);
 
-        const [items, types, imageDescriptor, searchIndexData, nameDesc] = await Promise.all([
+        const [
+          items,
+          mobs,
+          types,
+          imageDescriptor,
+          mobImageDescriptor,
+          searchIndexData,
+          mobSearchIndexData,
+          nameDesc
+        ] = await Promise.all([
           itemsResponse.json(),
+          mobsResponse.json(),
           typesResponse.json(),
           imageDescriptorResponse.json(),
+          mobImageDescriptorResponse.json(),
           searchIndexResponse.json(),
+          mobSearchIndexResponse.json(),
           nameDescResponse.json()
         ]);
 
         setLocalData({
           items,
+          mobs,
           types,
           imageDescriptor,
+          mobImageDescriptor,
           searchIndex: lunr.Index.load(searchIndexData),
+          mobSearchIndex: lunr.Index.load(mobSearchIndexData),
           nameDesc,
           iconBatches: {},
-          illustrationBatches: {}
+          illustrationBatches: {},
+          mobSpriteBatches: {}
         });
 
         handleInitialSearch();
@@ -120,16 +155,19 @@ const Database = () => {
     loadInitialData();
   }, []);
 
-  const loadImageBatch = async (batchNumber: number, type: 'icons' | 'illustrations') => {
-    if (!localData[type === 'icons' ? 'iconBatches' : 'illustrationBatches'][batchNumber]) {
+  const loadImageBatch = async (batchNumber: number, type: 'icons' | 'illustrations' | 'sprites') => {
+    const batchType = type === 'sprites' ? 'mobSpriteBatches' : type === 'icons' ? 'iconBatches' : 'illustrationBatches';
+    const batchPrefix = type === 'sprites' ? 'mob_sprites' : type;
+
+    if (!localData[batchType][batchNumber]) {
       try {
-        const response = await fetch(`/data/${type}_batch_${batchNumber}.json`);
+        const response = await fetch(`/data/${batchPrefix}_batch_${batchNumber}.json`);
         const batchData = await response.json();
         
         setLocalData(prev => ({
           ...prev,
-          [type === 'icons' ? 'iconBatches' : 'illustrationBatches']: {
-            ...prev[type === 'icons' ? 'iconBatches' : 'illustrationBatches'],
+          [batchType]: {
+            ...prev[batchType],
             [batchNumber]: batchData
           }
         }));
@@ -139,11 +177,11 @@ const Database = () => {
         return null;
       }
     }
-    return localData[type === 'icons' ? 'iconBatches' : 'illustrationBatches'][batchNumber];
+    return localData[batchType][batchNumber];
   };
 
-  const getImage = async (id: string, type: 'icons' | 'illustrations'): Promise<string> => {
-    const descriptor = localData.imageDescriptor[type];    
+  const getImage = async (id: string, type: 'icons' | 'illustrations' | 'sprites'): Promise<string> => {
+    const descriptor = type === 'sprites' ? localData.mobImageDescriptor : localData.imageDescriptor[type === 'icons' ? 'icons' : 'illustrations'];
     if (!descriptor || descriptor[id] === undefined) {
         return '/placeholder.png';
     }
@@ -159,28 +197,43 @@ const Database = () => {
     const endIndex = Math.min(startIndex + RESULTS_PER_PAGE, ids.length);
     const paginatedIds = ids.slice(startIndex, endIndex);
     
-    const results = await Promise.all(paginatedIds.map(async id => {
-      const [icon, illustration] = await Promise.all([
-        getImage(id, 'icons'),
-        getImage(id, 'illustrations')
-      ]);
+    if (activeTab === 'items') {
+      const results = await Promise.all(paginatedIds.map(async id => {
+        const [icon, illustration] = await Promise.all([
+          getImage(id, 'icons'),
+          getImage(id, 'illustrations')
+        ]);
 
-      const itemData = localData.items[id] || {};
-      const nameDescData = localData.nameDesc.find((item: any) => item.id === id);
+        const itemData = localData.items[id] || {};
+        const nameDescData = localData.nameDesc.find((item: any) => item.id === id);
 
-      const type = Number(itemData.type);
-      return {
-        id,
-        type,
-        ...itemData,
-        name: nameDescData?.name || '',
-        description: nameDescData?.description || '',
-        icon,
-        illustration
-      };
-    }));
+        const type = Number(itemData.type);
+        return {
+          id,
+          type,
+          ...itemData,
+          name: nameDescData?.name || '',
+          description: nameDescData?.description || '',
+          icon,
+          illustration
+        };
+      }));
 
-    return results;
+      return results;
+    } else {
+      const results = await Promise.all(paginatedIds.map(async id => {
+        const sprite = await getImage(id, 'sprites');
+        const mobData = localData.mobs[id] || {};
+
+        return {
+          id,
+          ...mobData,
+          sprite
+        };
+      }));
+
+      return results;
+    }
   };
 
   const handleInitialSearch = async () => {
@@ -200,38 +253,37 @@ const Database = () => {
 
     if (searchTerm.trim()) {
       const isNumericSearch = /^\d+$/.test(searchTerm.trim());
+      const searchIndex = activeTab === 'items' ? localData.searchIndex : localData.mobSearchIndex;
+      const dataSource = activeTab === 'items' ? localData.items : localData.mobs;
 
       if (isNumericSearch) {
         const id = searchTerm.trim();
-        const itemType = Number(localData.items[id]?.type);
-        if (localData.items[id] && !isNaN(itemType)) {
+        if (dataSource[id]) {
           matchedIds = [id];
         }
-      } else if (localData.searchIndex) {
+      } else if (searchIndex) {
         try {
-          const searchResults = localData.searchIndex.search(searchTerm) as LunrSearchResult[];
+          const searchResults = searchIndex.search(searchTerm) as LunrSearchResult[];
           matchedIds = searchResults
             .sort((a, b) => b.score - a.score)
-            .map(result => result.ref)
-            .filter(id => {
-              const itemType = Number(localData.items[id]?.type);
-              return !isNaN(itemType);
-            });
+            .map(result => result.ref);
         } catch (error) {
           console.error('Error en la búsqueda:', error);
         }
       }
     } else {
-      matchedIds = Object.keys(localData.items).filter(id => {
-        const itemType = Number(localData.items[id]?.type);
-        return !isNaN(itemType);
-      });
+      matchedIds = Object.keys(activeTab === 'items' ? localData.items : localData.mobs);
     }
 
-    if (options.selectedTypes.length > 0) {
+    if (activeTab === 'items' && options.selectedTypes.length > 0) {
       matchedIds = matchedIds.filter(id => 
         options.selectedTypes.includes(Number(localData.items[id].type))
       );
+    } else if (activeTab === 'mobs' && !options.includeMiniBoss) {
+      matchedIds = matchedIds.filter(id => {
+        const mob = localData.mobs[id];
+        return !mob.mode || !mob.mode.includes(5); // 5 es el modo BOSS
+      });
     }
 
     const totalPages = Math.ceil(matchedIds.length / RESULTS_PER_PAGE);
@@ -431,7 +483,11 @@ const Database = () => {
               <>
                 <div className="results-grid">
                   {searchState.results.map(result => (
-                    <ItemCard key={result.id} result={result} />
+                    activeTab === 'items' ? (
+                      <ItemCard key={result.id} result={result as SearchResult} />
+                    ) : (
+                      <MobCard key={result.id} result={result as MobResult} />
+                    )
                   ))}
                 </div>
                 {searchState.totalPages > 1 && (
