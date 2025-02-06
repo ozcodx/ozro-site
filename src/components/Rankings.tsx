@@ -12,7 +12,7 @@ interface Account {
   total_cards: number;
   total_diamonds: number;
   total_mvp_cards: number;
-  total_zeny: number;
+  total_zeny: string;
   userid: string;
 }
 
@@ -216,8 +216,10 @@ const Rankings = () => {
   }, []);
 
   const calculateTotalZeny = (account: Account) => {
-    return account.total_zeny + (account.total_diamonds * 500000000);
+    return parseInt(account.total_zeny) + (account.total_diamonds * 500000000);
   };
+
+
 
   const toTitleCase = (str: string) => {
     return str.toLowerCase().split(' ').map(word => 
