@@ -29,8 +29,164 @@ interface Character {
 
 interface RankingData {
   accounts: Account[];
-  byClass: Record<string, Character[]>;
-  overall: Character[];
+  characters: {
+    byClass: Record<string, Character[]>;
+    overall: Character[];
+  };
+}
+
+const CLASSES = {
+  0: "Novice",
+  1: "Swordman",
+  2: "Mage",
+  3: "Archer",
+  4: "Acolyte",
+  5: "Merchant",
+  6: "Thief",
+
+  7: "Knight",
+  8: "Priest",
+  9: "Wizard",
+  10: "Blacksmith",
+  11: "Hunter",
+  12: "Assassin",
+  13: "Knight2",
+  14: "Crusader",
+  15: "Monk",
+  16: "Sage",
+  17: "Rogue",
+  18: "Alchemist",
+  19: "Bard",
+  20: "Dancer",
+  21: "Crusader2",
+  22: "Wedding",
+  23: "SuperNovice",
+  24: "Gunslinger",
+  25: "Ninja",
+  26: "Xmas",
+  27: "Summer",
+
+  4001: "Novice_High",
+  4002: "Swordman_High",
+  4003: "Mage_High",
+  4004: "Archer_High",
+  4005: "Acolyte_High",
+  4006: "Merchant_High",
+  4007: "Thief_High",
+  4008: "Lord_Knight",
+  4009: "High_Priest",
+  4010: "High_Wizard",
+  4011: "Whitesmith",
+  4012: "Sniper",
+  4013: "Assassin_Cross",
+  4014: "Lord_Knight2",
+  4015: "Paladin",
+  4016: "Champion",
+  4017: "Professor",
+  4018: "Stalker",
+  4019: "Creator",
+  4020: "Clown",
+  4021: "Gypsy",
+  4022: "Paladin2",
+
+  4023: "Baby",
+  4024: "Baby_Swordman",
+  4025: "Baby_Mage",
+  4026: "Baby_Archer",
+  4027: "Baby_Acolyte",
+  4028: "Baby_Merchant",
+  4029: "Baby_Thief",
+  4030: "Baby_Knight",
+  4031: "Baby_Priest",
+  4032: "Baby_Wizard",
+  4033: "Baby_Blacksmith",
+  4034: "Baby_Hunter",
+  4035: "Baby_Assassin",
+  4036: "Baby_Knight2",
+  4037: "Baby_Crusader",
+  4038: "Baby_Monk",
+  4039: "Baby_Sage",
+  4040: "Baby_Rogue",
+
+  4041: "Baby_Alchemist",
+  4042: "Baby_Bard",
+  4043: "Baby_Dancer",
+  4044: "Baby_Crusader2",
+  4045: "Super_Baby",
+
+  4046: "Taekwon",
+  4047: "Star_Gladiator",
+  4048: "Star_Gladiator2",
+  4049: "Soul_Linker",
+
+  4050: "Gangsi",
+  4051: "Death_Knight",
+  4052: "Dark_Collector",
+
+  4054: "Rune_Knight",
+  4055: "Warlock",
+  4056: "Ranger",
+  4057: "Arch_Bishop",
+  4058: "Mechanic",
+  4059: "Guillotine_Cross",
+
+  4060: "Rune_Knight_T",
+  4061: "Warlock_T",
+  4062: "Ranger_T",
+  4063: "Arch_Bishop_T",
+  4064: "Mechanic_T",
+
+  4065: "Guillotine_Cross_T",
+  4066: "Royal_Guard",
+  4067: "Sorcerer",
+  4068: "Minstrel",
+  4069: "Wanderer",
+  4070: "Sura",
+  4071: "Genetic",
+  4072: "Shadow_Chaser",
+
+  4073: "Royal_Guard_T",
+  4074: "Sorcerer_T",
+  4075: "Minstrel_T",
+  4076: "Wanderer_T",
+  4077: "Sura_T",
+  4078: "Genetic_T",
+  4079: "Shadow_Chaser_T",
+
+  4080: "Rune_Knight2",
+  4081: "Rune_Knight_T2",
+  4082: "Royal_Guard2",
+  4083: "Royal_Guard_T2",
+  4084: "Ranger2",
+  4085: "Ranger_T2",
+  4086: "Mechanic2",
+  4087: "Mechanic_T2",
+
+  4096: "Baby_Rune",
+  4097: "Baby_Warlock",
+  4098: "Baby_Ranger",
+  4099: "Baby_Bishop",
+  4100: "Baby_Mechanic",
+  4101: "Baby_Cross",
+  4102: "Baby_Guard",
+  4103: "Baby_Sorcerer",
+  4104: "Baby_Minstrel",
+  4105: "Baby_Wanderer",
+  4106: "Baby_Sura",
+  4107: "Baby_Genetic",
+  4108: "Baby_Chaser",
+
+  4109: "Baby_Rune2",
+  4110: "Baby_Guard2",
+  4111: "Baby_Ranger2",
+  4112: "Baby_Mechanic2",
+
+  4190: "Super_Novice_E",
+  4191: "Super_Baby_E",
+
+  4211: "Kagerou",
+  4212: "Oboro",
+  4215: "Rebellion"
 }
 
 const Rankings = () => {
@@ -63,21 +219,38 @@ const Rankings = () => {
     return account.total_zeny + (account.total_diamonds * 500000000);
   };
 
+  const toTitleCase = (str: string) => {
+    return str.toLowerCase().split(' ').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
+  };
+
+  const formatNumber = (num: number) => {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  };
+
+  const formatClassName = (classId: number) => {
+    const className = Object.entries(CLASSES).find(([id]) => parseInt(id) === classId)?.[1] || `Clase ${classId}`;
+    return className.replace(/_/g, ' ').replace(/\d+/g, '').trim();
+  };
+
   const renderZenyRanking = () => {
     if (!rankingData?.accounts) return null;
     const sortedAccounts = [...rankingData.accounts]
+      .filter(account => !['admin', 'gamemaster'].includes(account.userid.toLowerCase()))
       .sort((a, b) => calculateTotalZeny(b) - calculateTotalZeny(a))
       .slice(0, 10)
       .filter(account => calculateTotalZeny(account) > 0);
 
     return (
       <div className="ranking-list">
-        <h3>Top 10 - Zeny Total</h3>
+        <h3>Zeny Total</h3>
         {sortedAccounts.map((account, index) => (
           <div key={account.account_id} className="ranking-item">
             <span className="rank">{index + 1}</span>
-            <span className="name">{account.userid}</span>
-            <span className="value">{calculateTotalZeny(account).toLocaleString()} z</span>
+            <span className="name">{toTitleCase(account.userid)}</span>
+            <span className="value">{formatNumber(calculateTotalZeny(account))} z</span>
+            <span className="diamonds">[{account.total_diamonds} diamantes]</span>
           </div>
         ))}
       </div>
@@ -87,18 +260,19 @@ const Rankings = () => {
   const renderCardsRanking = () => {
     if (!rankingData?.accounts) return null;
     const sortedAccounts = [...rankingData.accounts]
+      .filter(account => !['admin', 'gamemaster'].includes(account.userid.toLowerCase()))
       .sort((a, b) => b.total_cards - a.total_cards)
       .slice(0, 10)
       .filter(account => account.total_cards > 0);
 
     return (
       <div className="ranking-list">
-        <h3>Top 10 - Total de Cartas</h3>
+        <h3>Total de Cartas</h3>
         {sortedAccounts.map((account, index) => (
           <div key={account.account_id} className="ranking-item">
             <span className="rank">{index + 1}</span>
-            <span className="name">{account.userid}</span>
-            <span className="value">{account.total_cards}</span>
+            <span className="name">{toTitleCase(account.userid)}</span>
+            <span className="value">{account.total_cards} Carta{account.total_cards > 1 ? 's' : ''}</span>
           </div>
         ))}
       </div>
@@ -108,18 +282,20 @@ const Rankings = () => {
   const renderMvpCardsRanking = () => {
     if (!rankingData?.accounts) return null;
     const sortedAccounts = [...rankingData.accounts]
+      .filter(account => !['admin', 'gamemaster'].includes(account.userid.toLowerCase()))
       .sort((a, b) => b.total_mvp_cards - a.total_mvp_cards)
       .slice(0, 10)
       .filter(account => account.total_mvp_cards > 0);
 
     return (
       <div className="ranking-list">
-        <h3>Top 10 - Cartas MVP</h3>
+        <h3>Cartas de monstruos Boss</h3>
         {sortedAccounts.map((account, index) => (
           <div key={account.account_id} className="ranking-item">
             <span className="rank">{index + 1}</span>
-            <span className="name">{account.userid}</span>
-            <span className="value">{account.total_mvp_cards}</span>
+
+            <span className="name">{toTitleCase(account.userid)}</span>
+            <span className="value">{account.total_mvp_cards} Carta{account.total_mvp_cards > 1 ? 's' : ''}</span>
           </div>
         ))}
       </div>
@@ -129,18 +305,19 @@ const Rankings = () => {
   const renderLoginRanking = () => {
     if (!rankingData?.accounts) return null;
     const sortedAccounts = [...rankingData.accounts]
+      .filter(account => !['admin', 'gamemaster'].includes(account.userid.toLowerCase()))
       .sort((a, b) => b.logincount - a.logincount)
       .slice(0, 10)
       .filter(account => account.logincount > 0);
 
     return (
       <div className="ranking-list">
-        <h3>Top 10 - Login Count</h3>
+        <h3>Conteo de Logins</h3>
         {sortedAccounts.map((account, index) => (
           <div key={account.account_id} className="ranking-item">
             <span className="rank">{index + 1}</span>
-            <span className="name">{account.userid}</span>
-            <span className="value">{account.logincount}</span>
+            <span className="name">{toTitleCase(account.userid)}</span>
+            <span className="value">{formatNumber(account.logincount)} veces</span>
           </div>
         ))}
       </div>
@@ -148,24 +325,27 @@ const Rankings = () => {
   };
 
   const renderFameRanking = () => {
-    if (!rankingData?.byClass) return null;
+    if (!rankingData?.characters.byClass) return null;
     
-    return Object.entries(rankingData.byClass).map(([classId, characters]) => {
+    return Object.entries(rankingData.characters.byClass).map(([classId, characters]) => {
       const sortedCharacters = [...characters]
+        .filter(char => !['admin', 'gamemaster'].includes(char.userid.toLowerCase()))
         .sort((a, b) => b.fame - a.fame)
         .slice(0, 10)
         .filter(char => char.fame > 0);
+
 
       if (sortedCharacters.length === 0) return null;
 
       return (
         <div key={classId} className="ranking-list">
-          <h3>Top 10 Fame - Clase {classId}</h3>
+          <h3>Fama como {formatClassName(parseInt(classId))}</h3>
           {sortedCharacters.map((char, index) => (
             <div key={char.name} className="ranking-item">
               <span className="rank">{index + 1}</span>
-              <span className="name">{char.name} ({char.userid})</span>
-              <span className="value">{char.fame}</span>
+
+              <span className="name">{toTitleCase(char.name)} ({toTitleCase(char.userid)})</span>
+              <span className="value">{formatNumber(char.fame)} Puntos</span>
             </div>
           ))}
         </div>
@@ -174,22 +354,23 @@ const Rankings = () => {
   };
 
   const renderBaseExpRanking = () => {
-    if (!rankingData?.overall) return null;
-    const sortedCharacters = [...rankingData.overall]
+    if (!rankingData?.characters.overall) return null;
+    const sortedCharacters = [...rankingData.characters.overall]
+      .filter(char => !['admin', 'gamemaster'].includes(char.userid.toLowerCase()))
       .sort((a, b) => b.base_exp - a.base_exp)
       .slice(0, 10)
       .filter(char => char.base_exp > 0);
 
     return (
       <div className="ranking-list">
-        <h3>Top 10 - Base Experience</h3>
+        <h3>Experiencia y Nivel</h3>
         {sortedCharacters.map((char, index) => (
           <div key={char.name} className="ranking-item">
             <span className="rank">{index + 1}</span>
-            <span className="name">
-              {char.name} ({char.userid}) - Nivel {char.base_level} Clase {char.class}
-            </span>
-            <span className="value">{char.base_exp.toLocaleString()}</span>
+            <span className="name">{toTitleCase(char.name)} ({toTitleCase(char.userid)})</span>
+            <span className="class">{formatClassName(char.class || -1)}</span>
+            <span className="level">Nivel {char.base_level}</span>
+            <span className="value">{formatNumber(char.base_exp)}</span>
           </div>
         ))}
       </div>
@@ -217,19 +398,19 @@ const Rankings = () => {
             className={activeTab === 'mvp' ? 'active' : ''} 
             onClick={() => setActiveTab('mvp')}
           >
-            MVP
+            Cartas Boss
           </button>
           <button 
             className={activeTab === 'login' ? 'active' : ''} 
             onClick={() => setActiveTab('login')}
           >
-            Login
+            Conexiones
           </button>
           <button 
             className={activeTab === 'fame' ? 'active' : ''} 
             onClick={() => setActiveTab('fame')}
           >
-            Fame
+            Fama
           </button>
           <button 
             className={activeTab === 'exp' ? 'active' : ''} 
