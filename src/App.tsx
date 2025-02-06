@@ -6,6 +6,7 @@ import './App.css';
 const Main = lazy(() => import('./components/Main'));
 const Information = lazy(() => import('./components/Information'));
 const Database = lazy(() => import('./components/Database'));
+const Rankings = lazy(() => import('./components/Rankings'));
 const NotFound = lazy(() => import('./components/NotFound'));
 
 const App = () => {
@@ -21,6 +22,7 @@ const App = () => {
           <Route path="/" element={<Main />} />
           <Route path="/information" element={<Information />} />
           <Route path="/database" element={<Database />} />
+          <Route path="/rankings" element={<Rankings />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>

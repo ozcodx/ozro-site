@@ -387,8 +387,8 @@ a {
 }
 
 .result-card-image img {
-  max-width: 100px;
   height: auto;
+  max-width: 90px;
   object-fit: contain;
   image-rendering: pixelated;
 }
