@@ -42,7 +42,7 @@
   display: flex;
   gap: 0;
   margin: 0 auto;
-  max-width: 1200px;
+  max-width: 900px;
   padding: 0 2rem;
   position: relative;
   z-index: 3;
@@ -102,7 +102,7 @@
 
 .rankings-content {
   position: relative;
-  max-width: 1200px;
+  max-width: 900px;
   margin: -1px auto 0;
   background: url('/bg2.webp');
   background-size: cover;
@@ -167,13 +167,14 @@
 .value-header,
 .level-header,
 .class-header {
-  width: 100px;
+  width: 150px;
   text-align: right;
 }
 
 .ranking-item {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 0.5rem;
   background: rgba(255, 255, 255, 0.5);
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
@@ -181,7 +182,7 @@
 }
 
 .ranking-item:hover {
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.7);
 }
 
 .ranking-item:last-child {
@@ -195,9 +196,6 @@
   align-items: center;
   justify-content: center;
   background: #FF8D7F;
-  background-size: cover;
-  background-position: center;
-  background-blend-mode: overlay;
   color: white;
   border-radius: 50%;
   margin: 0 0.75rem;
@@ -207,7 +205,7 @@
 }
 
 .ranking-item .name {
-  flex: 1;
+  width: 250px;
   font-weight: 500;
   color: #1a1a1a;
   font-size: 0.9rem;
@@ -215,12 +213,14 @@
   overflow: hidden;
   text-overflow: ellipsis;
   padding: 0 0.5rem;
+  flex: auto;
 }
 
 .ranking-item .diamonds,
 .ranking-item .value,
 .ranking-item .level,
 .ranking-item .class {
+  width: 150px;
   font-weight: bold;
   color: #1a1a1a;
   font-size: 0.9rem;
@@ -228,6 +228,12 @@
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
   width: 100px;
+  text-align: right;
+  margin-left: 0.5rem;
+}
+
+.ranking-item .class {
+  width: 200px;
   text-align: right;
   margin-left: 0.5rem;
 }
@@ -267,6 +273,7 @@
   .ranking-item {
     padding: 0.5rem;
     font-size: 0.8rem;
+    flex-wrap: wrap;
   }
 
   .ranking-item .rank {
@@ -277,6 +284,7 @@
   }
 
   .ranking-item .name {
+    width: calc(100% - 100px);
     font-size: 0.8rem;
   }
 
@@ -284,19 +292,13 @@
   .ranking-item .value,
   .ranking-item .level,
   .ranking-item .class {
+    width: calc(50% - 1rem);
     font-size: 0.8rem;
-    width: 70px;
+    margin: 0.25rem;
     padding: 0.15rem 0.25rem;
   }
 
   .ranking-header {
-    font-size: 0.7rem;
-  }
-
-  .diamonds-header,
-  .value-header,
-  .level-header,
-  .class-header {
-    width: 70px;
+    display: none;
   }
 } 

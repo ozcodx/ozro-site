@@ -66,13 +66,13 @@ const CLASSES = {
   26: "Xmas",
   27: "Summer",
 
-  4001: "Novice_High",
-  4002: "Swordman_High",
-  4003: "Mage_High",
-  4004: "Archer_High",
-  4005: "Acolyte_High",
-  4006: "Merchant_High",
-  4007: "Thief_High",
+  4001: "High_Novice",
+  4002: "High_Swordman",
+  4003: "High_Mage",
+  4004: "High_Archer",
+  4005: "High_Acolyte",
+  4006: "High_Merchant",
+  4007: "High_Thief",
   4008: "Lord_Knight",
   4009: "High_Priest",
   4010: "High_Wizard",
@@ -130,13 +130,13 @@ const CLASSES = {
   4058: "Mechanic",
   4059: "Guillotine_Cross",
 
-  4060: "Rune_Knight_T",
-  4061: "Warlock_T",
-  4062: "Ranger_T",
-  4063: "Arch_Bishop_T",
-  4064: "Mechanic_T",
+  4060: "Rune_Knight_Trascended",
+  4061: "Warlock_Trascended",
+  4062: "Ranger_Trascended",
+  4063: "Arch_Bishop_Trascended",
+  4064: "Mechanic_Trascended",
 
-  4065: "Guillotine_Cross_T",
+  4065: "Guillotine_Cross_Trascended",
   4066: "Royal_Guard",
   4067: "Sorcerer",
   4068: "Minstrel",
@@ -145,13 +145,13 @@ const CLASSES = {
   4071: "Genetic",
   4072: "Shadow_Chaser",
 
-  4073: "Royal_Guard_T",
-  4074: "Sorcerer_T",
-  4075: "Minstrel_T",
-  4076: "Wanderer_T",
-  4077: "Sura_T",
-  4078: "Genetic_T",
-  4079: "Shadow_Chaser_T",
+  4073: "Royal_Guard_Trascended",
+  4074: "Sorcerer_Trascended",
+  4075: "Minstrel_Trascended",
+  4076: "Wanderer_Trascended",
+  4077: "Sura_Trascended",
+  4078: "Genetic_Trascended",
+  4079: "Shadow_Chaser_Trascended",
 
   4080: "Rune_Knight2",
   4081: "Rune_Knight_T2",
@@ -250,7 +250,7 @@ const Rankings = () => {
             <span className="rank">{index + 1}</span>
             <span className="name">{toTitleCase(account.userid)}</span>
             <span className="value">{formatNumber(calculateTotalZeny(account))} z</span>
-            <span className="diamonds">[{account.total_diamonds} diamantes]</span>
+            <span className="diamonds">{account.total_diamonds} diamantes</span>
           </div>
         ))}
       </div>
