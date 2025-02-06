@@ -45,6 +45,7 @@ const Donate = () => {
                     />
                   </div>
                 </form>
+                <p>Realiza tu donación de forma segura con tarjeta o saldo PayPal</p>
               </div>
 
               <div className="payment-option">
@@ -53,7 +54,7 @@ const Donate = () => {
                   src="/nequi-qr.png" 
                   alt="Código QR de Nequi" 
                   className="qr-code"
-                  />  
+                  />
                 <p>Escanea el código QR para donar a través de Nequi</p>
               </div>
             </div>

@@ -8,6 +8,7 @@ const Information = lazy(() => import('./components/Information'));
 const Database = lazy(() => import('./components/Database'));
 const Rankings = lazy(() => import('./components/Rankings'));
 const Donate = lazy(() => import('./components/Donate'));
+const Thanks = lazy(() => import('./components/Thanks'));
 const NotFound = lazy(() => import('./components/NotFound'));
 
 const App = () => {
@@ -25,6 +26,7 @@ const App = () => {
           <Route path="/database" element={<Database />} />
           <Route path="/rankings" element={<Rankings />} />
           <Route path="/donate" element={<Donate />} />
+          <Route path="/thanks" element={<Thanks />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
