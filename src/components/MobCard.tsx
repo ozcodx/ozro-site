@@ -283,7 +283,7 @@ const MobCard: React.FC<MobCardProps> = ({ result }) => {
                             <a href={`/database?item=${drop.id}`}>{truncatedName}</a>{drop.type === 'mvp' ? ' (MVP)' : ''}
                           </span>
                           <span className="drop-chance">
-                            {(Math.min(drop.per, 1000) / 10).toFixed(1)}%
+                            {(Math.min(drop.per, 10000) / 100).toFixed(2)}%
                           </span>
                         </div>
                       );
