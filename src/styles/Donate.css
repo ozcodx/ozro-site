@@ -1,0 +1,267 @@
+.donate {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.donate-container {
+  flex: 1;
+  padding: 2rem;
+  padding-top: 80px;
+  background-image: url('/bg.webp');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  position: relative;
+}
+
+.donate-container::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background: linear-gradient(to bottom, white, transparent);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.donate-container::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background: linear-gradient(to bottom, transparent, white);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.donate-content {
+  position: relative;
+  max-width: 800px;
+  margin: 3rem auto;
+  background: url('/bg2.webp');
+  background-size: cover;
+  background-position: center;
+  background-blend-mode: overlay;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+  z-index: 1;
+  text-align: center;
+}
+
+.donate-content h1 {
+  color: #1a1a1a;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.donate-content p {
+  color: #666;
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+.benefits {
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  text-align: left;
+}
+
+.benefits h2 {
+  color: #1a1a1a;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.benefits ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.benefits li {
+  padding: 0.5rem 0;
+  color: #333;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+}
+
+.benefits li::before {
+  content: '✦';
+  color: #FF8D7F;
+  margin-right: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.donate-form {
+  margin: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.donate-form form {
+  display: inline-grid;
+  justify-items: center;
+  align-content: start;
+  gap: 0.5rem;
+}
+
+.donate-button {
+  text-align: center;
+  border: none;
+  border-radius: 0.25rem;
+  min-width: 11.625rem;
+  padding: 0 2rem;
+  height: 2.625rem;
+  font-weight: bold;
+  background-color: #FF8D7F;
+  color: #000000;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.25rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin: 1rem 0rem;
+}
+
+.donate-button:hover {
+  background-color: #FFE066;
+  transform: translateY(-1px);
+}
+
+.payment-options {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  width: 100%;
+  margin: 1rem 0;
+}
+
+.payment-option {
+  flex: 1;
+  max-width: 300px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.payment-option h3 {
+  color: #1a1a1a;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.payment-option img {
+  max-width: 200px;
+  height: auto;
+  margin: 1rem 0;
+}
+
+.paypal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: #666;
+  font-size: 0.875rem;
+}
+
+.paypal-logo {
+  height: 0.875rem;
+  vertical-align: middle;
+}
+
+.important-notes {
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: left;
+}
+
+.important-notes h3 {
+  color: #1a1a1a;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.important-notes ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.important-notes li {
+  padding: 0.5rem 0;
+  color: #666;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.important-notes li::before {
+    content: '✦';
+    color: #FF8D7F;
+    margin-right: 0.5rem;
+    font-size: 1.2rem;
+}
+
+@media (max-width: 768px) {
+  .donate-container {
+    padding: 1rem;
+    padding-top: 80px;
+  }
+
+  .donate-content {
+    padding: 1.5rem;
+    margin: 2rem auto;
+  }
+
+  .donate-content h1 {
+    font-size: 1.5rem;
+  }
+
+  .donate-content p {
+    font-size: 1rem;
+  }
+
+  .benefits h2 {
+    font-size: 1.2rem;
+  }
+
+  .benefits li {
+    font-size: 1rem;
+  }
+
+  .important-notes li {
+    font-size: 0.9rem;
+  }
+
+  .payment-options {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .payment-option {
+    width: 100%;
+  }
+} 
