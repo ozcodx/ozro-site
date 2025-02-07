@@ -10,10 +10,13 @@ interface Account {
   account_id: number;
   logincount: number;
   total_cards: number;
+  total_cards_distinct: number;
   total_diamonds: number;
   total_mvp_cards: number;
+  total_boss_cards: number;
   total_zeny: string;
   userid: string;
+
 }
 
 interface Character {
@@ -29,10 +32,7 @@ interface Character {
 
 interface RankingData {
   accounts: Account[];
-  characters: {
-    byClass: Record<string, Character[]>;
-    overall: Character[];
-  };
+  characters: Character[];
 }
 
 const CLASSES = {
@@ -219,6 +219,9 @@ const Rankings = () => {
     return parseInt(account.total_zeny) + (account.total_diamonds * 500000000);
   };
 
+  const toPlural = (str: string, count: number) => {
+    return count == 1 ? str : str + 's';
+  };
 
 
   const toTitleCase = (str: string) => {
@@ -226,6 +229,7 @@ const Rankings = () => {
       word.charAt(0).toUpperCase() + word.slice(1)
     ).join(' ');
   };
+
 
   const formatNumber = (num: number) => {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -263,9 +267,9 @@ const Rankings = () => {
     if (!rankingData?.accounts) return null;
     const sortedAccounts = [...rankingData.accounts]
       .filter(account => !['admin', 'gamemaster'].includes(account.userid.toLowerCase()))
-      .sort((a, b) => b.total_cards - a.total_cards)
+      .sort((a, b) => b.total_cards_distinct - a.total_cards_distinct)
       .slice(0, 10)
-      .filter(account => account.total_cards > 0);
+      .filter(account => account.total_cards_distinct > 0);
 
     return (
       <div className="ranking-list">
@@ -274,7 +278,8 @@ const Rankings = () => {
           <div key={account.account_id} className="ranking-item">
             <span className="rank">{index + 1}</span>
             <span className="name">{toTitleCase(account.userid)}</span>
-            <span className="value">{account.total_cards} Carta{account.total_cards > 1 ? 's' : ''}</span>
+            <span className="class">{account.total_cards_distinct} {toPlural('Carta', account.total_cards_distinct)} {toPlural('Distinta', account.total_cards_distinct)}</span>
+            <span className="class">{account.total_cards} {toPlural('Carta', account.total_cards)} en Total</span>
           </div>
         ))}
       </div>
@@ -285,9 +290,8 @@ const Rankings = () => {
     if (!rankingData?.accounts) return null;
     const sortedAccounts = [...rankingData.accounts]
       .filter(account => !['admin', 'gamemaster'].includes(account.userid.toLowerCase()))
-      .sort((a, b) => b.total_mvp_cards - a.total_mvp_cards)
-      .slice(0, 10)
-      .filter(account => account.total_mvp_cards > 0);
+      .sort((a, b) => (b.total_boss_cards - a.total_boss_cards) + (b.total_mvp_cards - a.total_mvp_cards)   )
+      .slice(0, 10);
 
     return (
       <div className="ranking-list">
@@ -295,10 +299,13 @@ const Rankings = () => {
         {sortedAccounts.map((account, index) => (
           <div key={account.account_id} className="ranking-item">
             <span className="rank">{index + 1}</span>
-
             <span className="name">{toTitleCase(account.userid)}</span>
-            <span className="value">{account.total_mvp_cards} Carta{account.total_mvp_cards > 1 ? 's' : ''}</span>
+            <span className="class">{account.total_boss_cards} {toPlural('Carta', account.total_boss_cards)} Boss</span>
+            <span className="class">{account.total_mvp_cards} {toPlural('Carta', account.total_mvp_cards)} MVP</span>
           </div>
+
+
+
         ))}
       </div>
     );
@@ -327,22 +334,30 @@ const Rankings = () => {
   };
 
   const renderFameRanking = () => {
-    if (!rankingData?.characters.byClass) return null;
-    
-    return Object.entries(rankingData.characters.byClass).map(([classId, characters]) => {
-      const sortedCharacters = [...characters]
-        .filter(char => !['admin', 'gamemaster'].includes(char.userid.toLowerCase()))
-        .sort((a, b) => b.fame - a.fame)
-        .slice(0, 10)
-        .filter(char => char.fame > 0);
-
-
-      if (sortedCharacters.length === 0) return null;
+    // get characters with fame > 0
+    const characters = rankingData?.characters.filter(char => char.fame > 0).sort((a, b) => b.fame - a.fame) || [];
+    // separate by class
+    const byClass = characters.reduce((acc, char) => {
+      const className = formatClassName(char.class || -1);
+      acc[className] = [...(acc[className] || []), char];
+      return acc;
+    }, {} as Record<string, Character[]>);
+    // sort by fame
+    const sortedCharacters = Object.entries(byClass).map(([className, characters]) => {
+      return {
+        className,
+        characters: characters.sort((a, b) => b.fame - a.fame)
+      };
+    });
+    // render by class
+    return sortedCharacters.map(({ className, characters }) => {
+      if (characters.length === 0) return null;
 
       return (
-        <div key={classId} className="ranking-list">
-          <h3>Fama como {formatClassName(parseInt(classId))}</h3>
-          {sortedCharacters.map((char, index) => (
+        <div key={className} className="ranking-list">
+          <h3>Fama como {className}</h3>
+          {characters.map((char, index) => (
+
             <div key={char.name} className="ranking-item">
               <span className="rank">{index + 1}</span>
 
@@ -356,8 +371,8 @@ const Rankings = () => {
   };
 
   const renderBaseExpRanking = () => {
-    if (!rankingData?.characters.overall) return null;
-    const sortedCharacters = [...rankingData.characters.overall]
+    if (!rankingData?.characters) return null;
+    const sortedCharacters = [...rankingData.characters]
       .filter(char => !['admin', 'gamemaster'].includes(char.userid.toLowerCase()))
       .sort((a, b) => b.base_exp - a.base_exp)
       .slice(0, 10)
